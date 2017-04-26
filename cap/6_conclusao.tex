@@ -1,0 +1,40 @@
+\chapter{Conclusão\label{cap:conclusao}}
+
+Neste trabalho foi apresentada uma solução de controle de acesso biométrico autenticado por impressão digital, na qual o projeto foi elaborado visando a utilização de recursos de \textit{hardware} e \textit{software} livre. Esse sistema conta com um aparelho biométrico de interface com o usuário e um módulo servidor.
+
+O \textit{hardware} proposto, denominado aparelho Setfinger, trata-se de um aparelho biométrico baseado na plataforma Arduino. Além do \textit{hardware} proposto, foram produzidas outras duas versões de \textit{hardware} (1.0 e 2.0). Portanto, o \textit{hardware} proposto é a terceira versão de uma série de três versões produzidas ao longo da execução do projeto Setfinger, sendo a terceira versão o resultado da melhoria das versões anteriores. O Setfinger é um aparelho biométrico que disponibiliza a leitura, gravação e identificação de impressões digitais. Além disso, todas as versões desse aparelho foram instaladas, testadas e permanecem em funcionamento no CTIC.
+
+O módulo servidor, denominado servidor Setserver, é composto por uma servidor TCP baseado em node.js, um banco de dados Mysql e uma plataforma web de gerenciamento online. O servidor TCP é responsável por estabelecer a comunicação e trocar informações com o aparelho Setfinger, além de gravar no banco de dados os registros de acessos e os cadastros dos usuários. Enquanto que a plataforma web é a interface de gerenciamento de dados que possibilita aos administradores do sistema consultarem os registros de acesso de todos os usuários por data ou ID, verificar os usuários cadastrados e gerar gráficos de frequência com a relação dias/horas. 
+
+Com relação aos desafios enfrentados ao longo do desenvolvimento desse sistema, a confecção dos protótipos eletrônicos foi um processo que se tornou complexo devido as dificuldades de aquisição de componentes compatíveis com as necessidades do projeto, como cabos com dimensão e número de conexões específicas, gabinetes para embutir o aparato eletrônico, CI's e outros materiais eletrônicos. Desta forma, houve a necessidade de adaptações utilizando materiais alternativos, para chegar o mais próximo possível do resultado desejado. Portanto, de acordo com as conclusões obtidas, na Seção~\ref{cap:trabalhos_futuros} são apresentadas algumas sugestões de trabalhos futuros para aperfeiçoar o sistema proposto e aumentar sua escalabilidade.
+
+
+
+\section{Trabalhos futuros\label{cap:trabalhos_futuros}}
+
+
+Nesta seção são apresentadas algumas propostas de trabalhos futuros de acordo com as necessidades de aperfeiçoamento e escalabilidade observadas a partir dos resultado apresentados pelo sistema proposto neste trabalho. As propostas de trabalhos futuros são:
+
+\begin{itemize}
+    
+    \item Adequar o sistema proposto as normas estabelecidas pelo Ministério do Trabalho e Emprego (MTE), de acordo com a portaria que regulamenta o Sistema de Registro Eletrônico de Ponto (SREP): Portaria Nº 1.510, de 21 de Agosto de 2009, publicada no Diário Oficial da União (DOU) de 25/08/2009, a fim de tornar o sistema Setfinger compatível com os sistemas de Planejamento de Recurso Corporativo (\textit{Enterprise Resource Planning} -- ERP).
+    
+    \nomenclature{MTE}{Ministério do Trabalho e Emprego}
+    \nomenclature{DOU}{Diário Oficial da União}
+    \nomenclature{ERP}{Planejamento de Recurso Corporativo (\textit{Enterprise Resource Planning})}
+    \nomenclature{SREP}{Sistema de Registro Eletrônico de Ponto}
+    
+    \item Desenvolver a integração do sistema Setfinger com o Sistema Integrado de Gestão de Atividades Acadêmicas (SIGAA), da Universidade Federal do Pará.
+    
+    \nomenclature{SIGAA}{Sistema Integrado de Gestão de Atividades Acadêmicas}
+    
+    \item Confeccionar uma placa única com microcontrolador Atmega 2560 e Wiznet W5100 integrados, eliminando assim o Arduino e o Ethernet Shield. Além disso, produzir um gabinete em impressora 3D ou em material acrílico, para embutir o \textit{hardware} do aparelho Setfinger. 
+    
+    \item Elaborar uma versão de aparelho Setfinger baseado em Raspberry PI com leitor biométrico U.are.U 5000, com o intuito de oferecer uma versão de aparelho \textit{offline} independente de um servidor.
+    
+    \item Implementar métodos de segurança criptográfica na comunicação cliente-servidor.
+
+    \item Migrar a plataforma web Setfinger para Javascript e o banco de dados Mysql para Mongo DB. Desta forma, não haverá a necessidade de um servidor web, como WAMP ou LEMP, pois o serviço web realizado por esses servidores pode ser executado pelo node.js. Consequentemente, o processamento da plataforma será realizado do lado do cliente.
+
+
+\end{itemize}
