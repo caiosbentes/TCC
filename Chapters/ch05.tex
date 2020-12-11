@@ -1,0 +1,19 @@
+%Capitulo 5 - Considerações finais%
+
+\thispagestyle{fancy}
+
+\section{Conclusões}
+
+Neste trabalho foi apresentado um estudo de compressão de imagens e vídeos, através da análise teórica e implementações simplificadas dos codecs JPEG e MPEG-1. O aspecto perceptual dos vídeos decodificados também foi levado em consideração através da análise do método de quantização inter-adaptativa.
+
+Apesar de necessário, o processo de compressão de informações visuais é responsável pelo surgimento de artefatos nas mesmas. Portanto, o desafio é encontrar um meio termo entre taxa de compressão e qualidade perceptual.
+
+Através da análise desenvolvida neste trabalho pode-se concluir que a utilização do método de quantização inter-adaptativa gera resultados vantajosos para vídeos com alta atividade temporal, enquanto apresenta resultados similares ao codec padrão quando submetido a vídeos com baixa atividade temporal. Dessa forma, os resultados da avaliação objetiva obtidos neste trabalho então condizentes com os resultados subjetivos apresentados em \cite{Li_humanvisual}.
+
+Portanto, a utilização do método de quantização inter-adaptativa é, se não vantajosa, no mínimo equivalente ao padrão H.261.
+
+O mesmo não pode ser dito quando comparamos o codec H.261 utilizando apenas a tabela de quantização ponderada em relação aos codificadores analisados na primeira fase do experimento. Apesar da utilização de uma tabela plana para a quantização dos macroblocos inter codificados possuir embasamento teórico, \cite{ghanbari2003standard}, os resultados obtidos utilizando apenas a tabela ponderada foram os melhores alcançados neste trabalho, divergindo da literatura. No entanto, este resultado requer investigação mais ampla.
+
+\section{Trabalhos futuros}
+
+A próxima fase desta pesquisa tem como objetivos: obter o entendimento a respeito do funcionamento  de codecs mais atuais, como H.262, H.263, H.264 e H.265, de forma a entender as melhorias que foram ascrescentadas gradativamente; analisar de maneira mais profunda os resultados alcançados na segunda fase experimental e estudar outros métodos de melhoria de qualidade perceptual para armazenamento e vídeo conferência.

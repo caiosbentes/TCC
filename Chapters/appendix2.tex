@@ -1,0 +1,38 @@
+%Tabela de resultados de adições em um corpo GF($2^4$)
+
+\thispagestyle{fancy}
+\renewcommand{\thesubsection}{\Alph{section}}
+\section{Tabelas de codificação para compressão MPEG-1}
+\label{ap_MPEG}
+
+De maneira similar a codificação Huffman utilizada para codificar as imagens processadas, também há uma tabela pré 
+-definida para a codificação dos vetores de deslocamento a fim de otimizar o processo de compressão.
+
+Para a codificação das informações de movimeto dos macroblocos é necessário calcular a diferença entre os vetores de deslocamento dos macroblocos atual e anterior, de forma que se o atual for o primeiro de uma determinada linha o vetor de deslocamento do anterior será considerado nulo $ (0,0) $. Por fim, essa diferença será representada pelo código correspondente na tabela \ref{vlc_mvd}.
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+MVD       & Código     & MVD       & Código      \\ \hline
+-16 \& 16 & 00000011001 & 1         & 010         \\ \hline
+-15 \& 17 & 00000011011 & 2 \& -30  & 0010        \\ \hline
+-14 \& 18 & 00000011101 & 3 \& -29  & 00010       \\ \hline
+-13 \& 19 & 00000011111 & 4 \& -28  & 0000110     \\ \hline
+-12 \& 20 & 00000100001 & 5 \& -27  & 00001010    \\ \hline
+-11 \& 21 & 00000100011 & 6 \& -26  & 00001000    \\ \hline
+-10 \& 22 & 0000010011  & 7 \& -25  & 00000110    \\ \hline
+-9 \& 23  & 0000010101  & 8 \& -24  & 0000010110  \\ \hline
+-8 \& 24  & 0000010111  & 9 \& -23  & 0000010100  \\ \hline
+-7 \& 25  & 00000111    & 10 \& -22 & 0000010010  \\ \hline 
+-6 \& 26  & 00001001    & 11 \& -21 & 00000100010 \\ \hline
+-5 \& 27  & 00001011    & 12 \& -20 & 00000100000 \\ \hline
+-4 \& 28  & 0000111     & 13 \& -19 & 00000011110 \\ \hline
+-3 \& 29  & 00011       & 14 \& -18 & 00000011100 \\ \hline
+-2 \& 30  & 0011        & 15 \& -17 & 00000011010 \\ \hline
+-1        & 011         & N/A & N/A \\ \hline
+0         & 1           & N/A & N/A \\ \hline
+\end{tabular}
+\caption{Códigos de tamanho variável para os vetores de deslocamento.}
+\label{vlc_mvd}
+\end{table}

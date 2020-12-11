@@ -1,0 +1,732 @@
+%Capítulo 3 - Codificação de canal%
+
+%Forward Error Correction (FEC) = Channel coding%
+
+\section{Introdução}
+
+Forward Error Correction (FEC), ou, em tradução livre, Correção Antecipada de Erros - o termo é mais comumente utilizado em sua forma inglesa original-, também conhecida como Channel Coding, ou Codificação de Canal, é uma técnica utilizada amplamente nos sistemas de telecomunicação atuais, que pretende otimizar o recebimento de mensagens trazidas por sinais que transitam em canais com a presença de ruído, o qual pode danificar seriamente o conteúdo da mensagem. Este conjunto de técnicas vem recebendo atenção especial nos últimos anos devido ao seu crescente aperfeiçoamento, visando a recuperação da mensagem original, levando o erro (idealmente) para um valor nulo~\cite{Justesen04}.
+
+Este tipo de técnica possui inúmeras vantagens, e a maior delas é a possibilidade do próprio sistema se recuperar de erros na mensagem recebida sem a necessidade de retransmissão e é a única maneira prática de tornar as transmissões de um estado ruim para um estado aceitável, de acordo com uma densidade espectral de potência $E_{b}/N_{0}$ fixa, tendo em mente que circunstâncias práticas geralmente obrigam os projetistas a estipularem um valor limitado para $E_{b}/N_{0}$ ~\cite{Haykin01}.
+
+%A linha abaixo deve ser a última da seção%
+
+Logo adiante, serão demonstrados dois tipos de códigos de correção de erros: códigos de Hamming e códigos Reed-Solomon. O primeiro servirá de introdução aos códigos de correção de erros, por ser mais simples, para uma melhor e embasada compreensão do último.
+
+\section{Códigos de correção de erros}
+
+%incluir aqui uma breve introdução e falar de outros tipos de ECC. Posso citar o paper sobre Turbo codes ou até mesmo TCM%
+
+\section{Códigos de Hamming}
+
+Em uma transmissão de dados, é comum que haja falhas. Em um sistema computacional que transmita dados entre seus discos ou memória, um único \textbf{bit} pode representar uma palavra de código errônea, diferente da originalmente transmitida. Neste contexto, o advento dos códigos de Hamming~\cite{Hamming50} trouxe uma enorme possibilidade de correção desses erros, aplicando métodos simples e funcionais para a época (1950).
+Códigos de Hamming não são muito poderosos, mas fazem parte de uma classe limitada dos códigos de bloco, conhecidos como códigos \textit{perfeitos}, apesar de apresentar teoria bastante compreensível e, por esta razão têm caráter
+introdutório neste texto. A Figura~\ref{fig:hamming-plot} mostra a ineficácia dos códigos Hamming para um valor crescente de $E_b/N0$, relacionando este valor com a probabilidade de erro de bit na decodificação e comparando seu desempenho com outros
+tipos de código de bloco, como Golay e BCH~\cite{Sklar00}.
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.35]{./Figures/10}
+      \caption{Pb versus $E_b/N0$ para modulação BPSK em um canal AWGN.}
+      \label{fig:hamming-plot}
+  \end{center}
+\end{figure}
+
+Exemplificando seu funcionamento, tomem-se duas palavras de código: \textbf{11010101} e \textbf{10011100}. É possível determinar quantos bits correspondentes são diferentes. Aqui, 3 bits são diferentes. Para determinar quantos bits são diferentes, basta calcular a operação de \textbf{OU-Exclusivo} booleana bit a bit das duas palavras de código e contar (somar) o número de bits \textbf{1} no resultado. O número de posições de bit nas quais as duas palavras de código são diferentes é chamado de \textbf{distância de Hamming}. Isto pode ser interpretado como o número de bits necessários para que se corrija o código com erros, ou seja, para que se transforme o código errado no correto. No caso apresentado acima, as duas palavras estão a uma distância de Hamming de 3 uma da outra.
+
+Com uma palavra de memória de \textit{m} bits, todos os $2^m$ padrões de bits são válidos (pertencem à informação e o receptor sabe disso), mas somente $2^m$ das $2^n$ (onde \textit{n} é o número de bits de informação \textit{m} mais os bits de redundância \textit{r}) palavras de código (\textit{codewords}) são válidas. Das palavras transmitidas, caso o receptor detecte uma palavra inválida, isto é, uma palavra que não está registrada na lista do sistema como “válida”, o sistema é plenamente capaz de detectar o erro, conforme a distância. No procedimento de correção, o sistema percorre a lista em busca da palavra de menor distância para a palavra errônea.
+
+De posse de $m$ é plenamente possível projetar a \textit{codeword} com o número de bits de paridade mais apropriado ao tamanha da mesma. Para cada uma das $2^m$, existem $n$ palavras inválidas de, pelo menos, distância $d=1$ dela (como \textbf{010} e \textbf{001} de \textbf{000}).
+Logo, cada palavra válida requer $n+1$ padrões para si: os $n$ possíveis erros mais 1 para o padrão correto. Como o máximo de padrões possíveis é $2^n$, obtém-se a relação $(n+1)2^m\leq2^n$ e, como $n=m+r$, a relação 
+se torna $(m+r+1)\leq2^r$ onde, para um dado $m$, é possível estabelecer um limite inferior para o número de bits de paridade. A Tabela~\ref{tab:mxr} demonstra relações de bits de informação para bits de paridade para alguns valores.
+
+\begin{table}[!ht]
+{
+  \begin{center}
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \centering
+	  \textbf{Bits de informação (m)}	& \textbf{Bits de paridade (r)}		& \textbf{Codeword (n)} \\ \hline
+	  1					& 2					& 3			\\ \hline
+	  2					& 3					& 5			\\ \hline
+	  4					& 3					& 7			\\ \hline
+	  8					& 4					& 12			\\ \hline
+	  16					& 5					& 21			\\ \hline
+	  32					& 6					& 38			\\ \hline
+	  64					& 7					& 71			\\ 
+    \hline
+  \end{tabular}
+  \end{center}}
+  \caption{Relação de número de bits de paridade para um dado valor de bits de informação.}
+  \label{tab:mxr}
+\end{table}
+
+Nem sempre o sistema será capaz de detectar ou até mesmo corrigir os erros, apesar de o primeiro ser muito mais simples do que o segundo, e este processo depende da distâncida de Hamming para o sistema. Para \textbf{detectar} \textit{d} erros de um bit, é necessário um código de distância $d+1$, ou seja, o sistema deve possuir palavras em sua lista de palavras válidas, que sejam, no mínimo, $d+1$  distantes entre si, pois, dessa forma, para um número máximo $d$ de erros, é impossível que uma palavra sofra erros a ponto de se confundir com outra. Exemplo: \textbf{000} pode ter até dois erros de bit, que jamais será recebida como \textbf{111} ($d=2$). Similarmente, para a \textbf{correção} de $d$ erros, é necessária uma distância mínima de $2d+1$, pois o sistema precisa saber qual a palavra que se intencionou transmitir, e ela é a de menor distância. Exemplo: para 3 bits, o sistema pode corrigir $(3-1)/2=1$ erros de um bit, como quando \textbf{000} é transmitido como \textbf{010}, porém será impossível 
+corrigir quando a mesma sequência chegar como \textbf{011}, pois, aqui, $d=2$ e a sequência recebida será tratada como \textbf{111} ($d=1$).
+
+A Figura~\ref{fig:hamming-distance} (adaptado de~\cite{WikiHam}) mostra um exemplo espacial de palavras de 3 bits e suas distâncias (cada aresta representa uma distância de 1 bit). À direita, é mostrado o caminho de \textbf{100} a \textbf{011} (vermelho) e de \textbf{010} a \textbf{111} (azul).
+É importante destacar que, neste sistema de 3 bits, para um sistema de correção mínimo, os únicos códigos válidos seriam \textbf{000} e \textbf{111}, pois $d=3$ é a distância mínima aceitável para que se detecte, pelo menos, 2 erros de um bit ($d-1 = 2$) e se corrija, pelo menos, 1 erro $(\frac{(d-1)}{2} = 1)$.
+
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.7]{./Figures/11}
+      \caption{Palavras de 3 bits e suas distâncias de Hamming.}
+      \label{fig:hamming-distance}
+  \end{center}
+\end{figure}
+
+Como um exemplo simples de um código de detecção de erro, considere-se  um código em que um único \textit{bit de paridade} é anexado à palavra de dados. O bit de paridade é atribuído à mensagem, para que se possa definir se o número de bits \textbf{1} na mensagem é par ou ímpar (isto depende da característica do sistema). A distância neste caso será de 2, pois qualquer erro de um bit transformará a palavra em outra inválida. Este tipo de técnica possui a limitação de não poder corrigir os erros, mas é capaz de detectá-los e fazer o receptor solicitar ao transmissor a retransmissão dos dados. Um exemplo deste processo é mostrado a seguir.
+
+\definecolor{lightyellow}{rgb}{0.97,0.92,0.7}
+
+\renewcommand{\lstlistingname}{Código}
+\lstset{
+escapeinside={(*@}{@*)},
+language=TeX,
+basicstyle=\ttfamily,
+backgroundcolor=\color{lightyellow},
+tabsize=2,
+captionpos=b,
+frame=single,
+keywordstyle=\color{blue}
+}
+
+\begin{lstlisting}[caption={Transmissão de paridade par de 5 bits},label=cod:tx:parity]
+TX quer enviar: 11010
+TX calcular a paridade par: (*@1$\oplus$1$\oplus$0$\oplus$1$\oplus$0 = 1@*)
+TX adiciona bit de paridade: (*@11010\textbf{1}@*)
+** ENVIO **
+RX recebe: 110101
+RX calcula a paridade par: (*@1$\oplus$1$\oplus$0$\oplus$1$\oplus$0$\oplus$1 = 0@*)
+RX detecta resultado par e assume envio bem-sucedido
+\end{lstlisting}
+
+Para exemplificar o acima exposto, para casos mais gerais, tome-se um código onde são válidas apenas as seguintes palavras de código:
+
+ \begin{center}
+$0000000000, 0000011111, 1111100000, 1111111111$
+\end{center}
+
+O código possui distância mínima $d=5$, ou seja, pode corrigir até 2 ($(d-1)/2$) erros. Se em um caso hipotético de falha, o receptor identificar a palavra \textbf{0000000111}, o sistema saberá que a provável palavra original é \textbf{0000011111}, pois é o que apresenta menor distância (2), entretanto, no caso da palavra \textbf{0000000000} ser recebida como \textbf{0000000111} (o mesmo erro), o erro não pode ser corrigido, pois $d=3$, e a falha continuará.
+
+De posse do conhecimento básico, agora será demonstrado o algoritmo de Hamming.
+
+Cada bit de paridade é responsável por checar uma posição específica da sequência de bits, os quais são os bits de posições que são potências de 2, ou seja, em um código, diga-se, de $m=8$ bits, os bits de paridade serão
+, neste caso, \textbf{1, 2, 4, 8}. Cada bit da mensagem total é checada por bits de paridade específicos, obedecendo à relação $b_1+b_2+...+b_j=b$, onde $b_i, i=1,...,j$ são os bits de 
+paridade e $b$ é qualquer bit da sequência, por exemplo, o bit \textbf{7} é checado pelos bits de paridade \textbf{1}, \textbf{2} e \textbf{4}, pois $1+2+4=7$.
+Para se ilustrar melhor, a Tabela~\ref{tab:parity-pos} mostra os bits de paridade e os bits que eles checam em um código de 8 bits mais os 4 adicionados a ele (vide Tabela~\ref{tab:mxr}), totalizando 12 bits.
+
+\begin{table}[!ht]
+{
+  \begin{center}
+  \begin{tabular}{|c|c|}
+    \hline
+    \centering
+	  \textbf{Bits de paridade}	& \textbf{Bits checados}			\\ \hline
+	  1				& 1, 3, 5, 7, 9, 11				\\ \hline
+	  2				& 2, 3, 6, 7, 10, 11				\\ \hline
+	  4				& 4, 5, 6, 7, 12				\\ \hline
+	  8				& 8, 9, 10, 11, 12				\\ \hline
+  \end{tabular}
+  \end{center}}
+  \caption{Bits de paridade e os bits que checam.}
+  \label{tab:parity-pos}
+\end{table}
+
+Cada bit de paridade checa a quantidade de \textbf{1's} em cada um de seus bits (operação \textbf{OU-Exclusivo}) para a paridade designada ao sistema (ímpar ou par) e assume o valor de 1 ou 0,
+de acordo com a sua paridade. A Figura~\ref{fig:even-parity-codeword} ilustra esse procedimento para a palavra \textbf{00110101} e codificação de paridade par. Os bits em azul assumiram valores 1 ou 0, de acordo com o número de \textbf{1's} presentes nas posições em que eles checam.
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.7]{./Figures/12}
+      \caption{Codificação da palavra \textbf{00110101}.}
+      \label{fig:even-parity-codeword}
+  \end{center}
+\end{figure}
+
+No momento da recepção, o sistema verifica cada bit de paridade para se certificar de que o código foi transmitido integralmente. Caso um dos bits de informação tenha se corrompido, basta ver que bit de paridade está errado (isto é, se o seu valor não representa de fato a paridade das posições que ele checa) e comparar aos outros. Por exemplo, se a palavra recebida houver sido \textbf{111101100101} (bit 3 alterado) a checagem dos bits de paridade irá acusar:
+\begin{itemize}
+	\item bit 1 (incorreto): 1, 3, 5, 7, 9 e 11 possuem três \textbf{1's};
+	\item bit 2 (incorreto): 2, 3, 6, 7, 10, 11 possuem cinco \textbf{1's};
+	\item bit 4 (correto): 4, 5, 6, 7 e 12 possuem quatro \textbf{1's};
+	\item bit 8 (correto): 8, 9, 10, 11 e 12 possuem dois \textbf{1's}.
+\end{itemize}
+
+Sabendo-se que os bits errados são 1 e 2, basta encontrar o bit checado em comum entre ambos; neste caso, o bit na posição 3. Isto pode ser feito simplesmente ao somar os bits incorretos ($1+2=3$)~\cite{Tanenbaum07}.
+
+%Given the algorithm for computing the check bits, it is possible to construct
+%a complete list of the legal codewords, and from this list find the two codewords
+%whose Hamming distance is minimum. This distance is the Hamming distance
+%of the complete code.
+
+\section{Corpos de Galois}
+
+Para que se tenha um melhor entendimento do funcionamento dos códigos Reed-Solomon, é mister ter um conhecimento básico sobre determinados tipos de corpos algébricos, nos quais esses códigos foram inicialmente
+descritos, os Corpos Finitos, ou Corpos de Galois; nome dado em homenagem ao matemático francês Evariste Galois~\cite{Wicker94}.
+
+Um corpo de Galois é um corpo algébrico que possui um número finito de elementos. Tais corpos pertencem ao pequeno conjunto dos objetos mais importantes da matemática,
+servindo para descrever todas as outras estruturas e modelos matemáticos. Os exemplos desses objetos fundamentais são os conhecidos números primos~\cite{Arnold11},
+
+\begin{center}
+$p = 2, 3, 5, 7, 11, 13, 17, 19, 23, . . . , 997, 1009, . . . ,$ 
+\end{center}
+
+Códigos Reed-Solomon são descritos e construídos através de aritmética de corpos finitos, ou corpos de Galois. Um corpo finito de \textit{q} elementos é normalmente representado como \textbf{GF(\textit{q})}.
+O número de elementos em um corpo deve ser da forma $p^m$, onde \textit{p} é um inteiro primo e \textit{m} é um inteiro positivo~\cite{Cameron03}. Para todo \textit{q} desta forma, o corpo GF(\textit{q}) é único para isomorfismo,
+isto é, pode-se alterar o nome dos elementos no corpo, porém ele permanecerá o mesmo corpo. Logo, pode-se descrever completamente um corpo ao conceder o seu tamanho.
+A \textbf{ordem} de um elemento $\alpha$ em GF(\textit{q)} é o menor inteiro positivo \textit{m}, tal que $\alpha^m = 1$. Um corpo GF(\textit{q}) possui sempre pelo menos um elemento, o qual é chamado de \textbf{elemento primitivo},
+da ordem $(q-1)$. Exemplificando: seja $\alpha$ um primitivo em GF(\textit{q}). Devendo as $(q-1)$ potências consecutivas de $\alpha$, $\{1,\alpha,\alpha^2,...,\alpha^{q-2}\}$, serem distintas, elas serão os $(q-1)$ elementos
+não nulos de GF(\textit{q})~\cite{Wicker94}.
+
+
+O supracitado \textbf{elemento primitivo} é uma raiz do \textbf{polinômio primitivo} \textit{p(x)}. Para todos os fins
+é admitida a raiz $\alpha$, de onde, através da função \textit{módulo}, obtém-se a representação polinomial do corpo de Galois.
+Por exemplo, seja o corpo \textbf{GF(8)} $p(x) = x^3+x+1$, o qual é um polinômio binário primitivo. Seja $\alpha$ a raíz de $p(x)$; isto implica que $\alpha^3+\alpha+1=0$, ou similarmente,
+$\alpha^3=\alpha+1$ (adição e subtração possuem a mesma aritmética, ou seja, são equivalentes). Tal processo será explicado nas seções seguintes.
+
+\subsection{Estrutura de um corpo de Galois}
+
+Um corpo de Galois consiste em um conjunto de elementos (números). Esses números são baseados em um
+elemento primitivo, normalmente representado como $\alpha$, e assume os valores:
+
+$0,\alpha^0, \alpha^1, \alpha^2,..., \alpha^{N-1}$
+
+para formar um conjunto de $2^m$ elementos, onde $N=2^m-1$. Esse corpo finito é conhecido como \textbf{GF($2^m$)}.
+Para corpos finitos em geral, $\alpha$ pode assumir diversos valores, mas para o estudo de códigos Reed-Solomon para determinados
+fins, será considerado apenas como sendo igual a 2. Dentro desse conjunto, valores maiores de potência
+para $\alpha$ podem ser obtidos, simplesmente ao multiplicar todos os elementos novamente por $\alpha$. É mister salientar que
+as operações de multiplicação em um corpo finito não são definidas como normalmente o são; isto será explicado mais adiante.
+
+Além desse tipo de representação, cada elemento do corpo finito pode ser representado na forma polinomial:
+
+$\alpha_{m-1}x^{m-1}+...+\alpha_{1}x+\alpha_{0}$
+
+onde os coeficientes $\alpha_{m-1}$ a $\alpha_0$ assumem os valores 0 ou 1. Assim é possível descrever um elemento do corpo utilizando o
+número binário $\alpha_{m-1} ... \alpha_1\alpha_0$ e os $2^m$ elementos do corpo correspondem a todas as possíveis $2^m$ combinações do número de
+m bits (já trazendo para o campo de transmissão digital).
+
+Por exemplo, para o corpo de Galois com 16 elementos (GF(16), para $m=4$), o polinômio seria da forma:
+
+$\alpha_{3}x^{3}+\alpha_{2}x^{2}+\alpha_{1}x^{1}+\alpha_{0}x^{0}$
+
+onde $\alpha_3\alpha_2\alpha_1\alpha_0$ correspondem aos números binários \textbf{0000} a \textbf{1111}~\cite{Clarke02}.
+
+\subsection{Operações em um corpo de Galois}
+
+As operações internas ao corpo de Galois são bem definidas e traduzem manipulação de polinômios. São elas: adição, subtração, multiplicação e divisão.
+Essas operações para este tipo de corpo são diferentes das operações sobre corpos padrão; o impacto dito é que qualquer operação resultará em outro elemento
+pertencente ao corpo.
+
+\subsubsection{Adição e subtração}
+
+A operação de adição em um corpo de Galois é bastante trivial, e representa operações com polinômios. Para a adição, o procedimento é muito simples. Para se adicionar, por exemplo, os polinômios abaixo, tem-se o resultado:
+
+$(a_{m-1}x^{m-1}+...+a_{1}x^1+a_0x^0)+(b_{m-1}x^{m-1}+...+b_{1}x^1+b_0x^0)=$
+
+\begin{center}
+$c_{m-1}x^{m-1}+...+c_{1}x^1+c_0x^0)$
+\end{center}
+
+ou, generalizando:
+
+\begin{center}
+$c_i=a_i+b_i \>$ para $0\leq i \leq m-1$
+\end{center}
+
+E a existência de cada componente é dada por seus coeficientes, que assumem os seguintes valores, para corpos GF($2^m$):
+
+\begin{center}
+$\left\{\begin{matrix}
+c_i=0 \;\;\;\;\;\;para\;\;\;a_i=b_i\\ 
+c_i=1 \;\;\;\;\;\;para\;\;\;a_i\neq b_i
+\end{matrix}\right.$
+\end{center}
+
+Dessa forma, dois corpos de Galois são adicionados por adição \textit{módulo-2} em seus coeficientes, ou na forma binária, resultando na operação de \textbf{OU-exclusivo} dos dois números binários.
+
+Por exemplo, ao se somar os números \textbf{12} e \textbf{14} (elementos de GF($2^4$)), soma-se os seus polinômio correspondentes (demonstrados mais adiante):
+
+\begin{center}
+ $12=\alpha^6=1\alpha^3+1\alpha^2+0\alpha+0\alpha^0$
+ 
+ $14=\alpha^{11}=1\alpha^3+1\alpha^2+1\alpha+0\alpha^0$
+
+ $\therefore 12+14=0\alpha^3+0\alpha^2+1\alpha+0\alpha^0 = \alpha = 2$
+
+\end{center}
+
+Uma alternativa de processo de soma é realizar a operação \textbf{OU-Exclusivo} bit-a-bit entre os números na forma binária:
+
+\begin{center}
+ $12+14=1100\oplus1110=0010=2$
+\end{center}
+
+A operação de subtração é exatamente a mesma. Ou seja, $12+14=12-14=2$~\cite{Moreira06}.
+
+
+\subsubsection{Polinômio primitivo}
+
+Um polinômio primitivo, ou polinômio gerador~\cite{Clarke02}, são estruturas de grande interesse para o estudo dos corpos de Galois, pois são eles quem definem diretamente
+os elementos de um corpo, consequentemente, definindo o formato dos códigos RS. A condição necessária para definir um polinômio como primitivo, é que ele seja irredutível,
+de grau \textit{m} e se, para o menor inteiro positivo \textit{n} possível, o dado polinômio divide $x^n+1$, para $n=2^m-1$. Um polinômio irredutível é aqueles que não
+pode ser reduzido a polinômios de graus menores, e a condição da divisão deve gerar um quociente não nulo e um resto nulo~\cite{Sklar00}.
+
+Como definido em~\cite{MacWilliams77}, ``Um polinômio é irredutível sobre um corpo se ele não for o produto de dois polinômios de grau menor dentro do corpo.
+Falando de forma abrangente, o polinômio irredutível é como um número primo: ele não possui fatores triviais. Qualquer polinômio pode ser escrito como o 
+produto de polinômios irredutíveis.''
+
+Elementos primitivos têm a propriedade de que suas potências geram todos os elementos não nulos do corpo de Galois. Esses elementos não são únicos\cite{Proakis08}.
+
+Por exemplo, para um corpo GF($2^4$), existe o polinômio primitivo:
+
+\begin{center}
+ $x^4+x+1$
+\end{center}
+
+\begin{table}[!ht]
+{\small
+  \begin{center}
+  \begin{tabular}{|c|l|c|c|}
+    \hline
+    \centering
+	  \textbf{Índice}	& \textbf{Polinômio}		& \textbf{Binário}	& \textbf{Decimal}	\\ \hline
+	  $0$			& 0				& 0000			& 0			\\ \hline
+	  $\alpha^{0}$		& 1				& 0001			& 1			\\ \hline
+	  $\alpha^{1}$		& $\alpha$			& 0010			& 2			\\ \hline
+	  $\alpha^{2}$		& $\alpha^2$			& 0100			& 4			\\ \hline
+	  $\alpha^{3}$		& $\alpha^3$			& 1000			& 8			\\ \hline
+	  $\alpha^{4}$		& $\alpha+1$			& 0011			& 3			\\ \hline
+	  $\alpha^{5}$		& $\alpha^2+\alpha$		& 0110			& 6			\\ \hline
+	  $\alpha^{6}$		& $\alpha^3+\alpha^2$		& 1100			& 12			\\ \hline
+	  $\alpha^{7}$		& $\alpha^3+\alpha+1$		& 1011			& 11			\\ \hline
+	  $\alpha^{8}$		& $\alpha^2+1$			& 0101			& 5			\\ \hline
+	  $\alpha^{9}$		& $\alpha^3+\alpha$		& 1010			& 10			\\ \hline
+	  $\alpha^{10}$		& $\alpha^2+\alpha+1$		& 0111			& 7			\\ \hline
+	  $\alpha^{11}$		& $\alpha^3+\alpha^2+\alpha$	& 1110			& 14			\\ \hline
+	  $\alpha^{12}$		& $\alpha^3+\alpha^2+\alpha+1$	& 1111			& 15			\\ \hline
+	  $\alpha^{13}$		& $\alpha^3+\alpha^2+1$		& 1101			& 13			\\ \hline
+	  $\alpha^{14}$		& $\alpha^3+1$			& 1001			& 9			\\ \hline
+  \end{tabular}
+  \end{center}}
+  \caption{Elementos do corpo GF($2^4$) para o polinômio $x^4+x+1$.}
+  \label{tab:field-elms}
+\end{table}
+
+Pode-se provar que ele é o polinômio gerador do corpo - mas não único -, pois, para $m=4$, o polinômio $x^{(2^m-1)}+1=x^{15}+1$ pode ser divido por $x^4+x+1$, gerando
+um quociente não nulo e um resto nulo. E, através de diversas iterações - exaustivas se reproduzidas neste texto -, pode-se provar que, para valores onde $1\leq n<15$,
+os consequentes polinômios não poderão ser divididos de forma exata pelo polinômio primitivo candidato~\cite{Sklar00}.
+
+
+Tomando-se, então, o polinômio acima (para GF($2^4$)), é possível gerar todos os elementos não nulos do corpo, considerando-se $\alpha$ como uma raiz do polinômio, então
+$p(\alpha)=0$,  que resulta em:
+
+\begin{center}
+ $\alpha^4+\alpha+1=0$ ou $\alpha^4=\alpha+1$
+\end{center}
+
+
+A relação acima é o ponto de partida para a geração dos elementos do corpo. Ao se multiplicar $\alpha$ a ela e substituindo-se toda ocorrência de $\alpha^4$ por $\alpha+1$,
+obtém-se cada elemento consecutivo. Por exemplo:
+
+\begin{center}
+$\alpha^4=\alpha+1 \Rightarrow \alpha^5=\alpha(\alpha^4)=\alpha(\alpha+1)=\alpha^2+\alpha$
+
+$\alpha^6=\alpha(\alpha^5)=\alpha(\alpha^2+\alpha)=\alpha^3+\alpha^2$ 
+\end{center}
+
+Os índices de $\alpha$ representam cada elemento do corpo. Para uma melhor visualização, é mostrada na Tabela~\ref{tab:field-elms} a relação de todos os elementos de GF($2^4$) para
+o polinômio gerador $x^4+x+1$.
+
+
+% Primitive elements have the property that their
+% powers generate all nonzero elements of the Galois field. Primitive elements are not
+% unique; for instance, the reader can verify that in the GF(8) of Example 7.1–2, X 2 and
+% X + 1 are both primitive elements; however, 1 ∈ GF(8) is not primitive since 11 = 1.
+
+
+% A Galois field is a field, having a finite number of elements. Such fields belong
+% to the small quantity of the most fundamental mathematical objects, serving
+% to describe all other mathematical structures and models.
+% The examples of such fundamental objects are the well known prime
+% numbers,
+% p = 2, 3, 5, 7, 11, 13, 17, 19, 23, . . . , 997, 1009, . . . ,
+% these are the positive integers, which have each only 2 integer divisors (1 and
+% itself), the number 1 being not prime.
+
+\subsubsection{Multiplicação}
+
+O processo de multiplicação em corpos finitos é bastante simples, pois trata de multiplicação padrão de polinômios. Por exemplo, para se multiplicar \textbf{11} e \textbf{9},
+tomam-se os seus respectivos polinômios (lembrando que $x+x=x-x=0$):
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $11\times9$	& $=(x^3+x+1)(x^3+1)$ \\ 
+			& $=x^6+x^4+x+1$
+  \end{tabular}
+\end{center}
+
+Após esse passo, é necessário dividir o polinômio resultante pelo polinômio gerador. Para este exemplo, será considerado o polinômio primitivo de GF($2^4$), $x^4+x+1$.
+A divisão é a forma tradicional de divisão de polinômios. O processo é como se segue:
+
+% \begin{center}
+%   \begin{tabular}{l c c c c c c c}
+%     \centering
+% 			 & $x^6$ & $x^5$ & $x^4$ & $x^3$ & $x^2$ & $x^1$ & $x^0$\\ 
+% 			 & 
+%   \end{tabular}
+% \end{center}
+
+%\polylongdiv{X^3+X^2-1}{X-1}
+\begin{center}
+ 
+\[
+\begin{array}{m{3.5em}cccccccc}
+
+&	&	&	&	&	& +x^2	& 	& +1\\
+\cline{2-9}
+\multicolumn{2}{l}{x^4+x+1\big)}
+
+& +x^6	&	& +x^4	&	&	& +x	& +1	\\
+
+&	& +x^6	&	& 	& +x^3	& +x^2	&	&	\\
+\cline{3-9}
+& 	& 	& 	& +x^4	& +x^3	& +x^2	& +x	& +1  \\
+& 	& 	& 	& +x^4	& 	& 	& +x	& +1 \\
+\cline{4-9}
+&	& 	& 	& 	& +x^3	&+x^2	& 	&  \\
+
+\end{array}
+\]
+\end{center}
+
+O quociente da divisão é $x^2+1$, porém o que interessa ao cálculo é o resto, $x^3+x^2$, que representa o produto. Checando a Tabela~\ref{tab:field-elms}, percebe-se que o
+elemento em questão é o elemento $\alpha^6$, que vale \textbf{12}. Portanto, $11\times9=12$.
+
+Outro método mais trivial realiza a operação na forma de índice. No caso do mesmo exemplo, $11\times9$, seria o mesmo que afirmar que:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $\alpha^7\times\alpha^{14}$	& $=\alpha^{(21)mod 15}$ \\ 
+					& $=\alpha^6$		 \\
+					& $=12$
+  \end{tabular}
+\end{center}
+
+
+
+\section{Códigos Reed-Solomon}
+
+Em 1960, Irving Reed e Gus Solomon publicaram um artigo no ``Journal of the Society for Industrial and Applied Mathematics''. Esse artigo descreveu
+uma nova classe de códigos de correção de erros, que são agora chamados de códigos Reed-Solomon (RS)~\cite{Reed60}. Esses códigos têm grande poder e utilidade, e são
+hoje encontrados em diversas aplicações, desde discos compactos (CD) até aplicações de pesquisa espacial~\cite{Sklar02}. E continuam a ser a codificação preferida
+quando a taxa de bits errados (\textit{Bit Error Rate - BER}) não é muito alta, pois eles podem oferecer um grande poder de correção de erros com relativamente pouca redundância a
+taxas de dados de dezenas ou centenas de megabits por segundo. Funcionam bem também contra erros em rajadas~\cite{Costello07}.
+Os códigos Reed-Solomon são um caso especial
+dos códigos BCH, onde aqueles apresentam-se como códigos BCH \textit{q-ários}, onde \textit{q} é um inteiro não negativo~\cite{Lin83}.
+
+%talvez colocar aqui algumas aplicações do código - procurar por papers no IEEE%
+
+Códigos Reed-Solomon são códigos de bloco \textit{cíclicos não-binários} com símbolos de sequências de até \textit{m} bits,
+onde \textit{m} é qualquer número inteiro positivo, possuindo um valor maior que 1. Códigos RS (\textit{n,k}) para
+símbolos de \textit{m} bits existem para todo \textit{n} e \textit{k}, para os quais:
+
+\begin{center}
+$0<k<n<2^m + 2$ 
+\end{center}
+
+onde \textit{k} é o número de símbolos de dados a serem codificados, e \textit{n} é o número total de símbolos de código no bloco codificado. A representação
+mais geral de um bloco RS é da seguinte forma:
+
+\begin{center}
+$(n,k)=(2^m-1, 2^m-1-2t)$ 
+\end{center}
+
+Onde $t$ é a capacidade de correção de erro do código e $n-k=2t$ é o número de símbolos de paridade. Um código RS estendido pode ser feito com até $n=2^m$ ou
+$n=2^m+1$, mas não mais que isso~\cite{Sklar00}.
+
+Em~\cite{Haiman03}, o autor definiu, mais especificamente, os códigos RS da seguinte forma:
+
+``Seja \textit{p} um número primo e sejam $m\leq n\leq p$. O código Reed-Solomon sobre o corpo $\mathbb{Z}_p$ com \textit{m} símbolos de mensagem
+e \textit{n} símbolos de código é definido a seguir. Dado um vetor de mensagem $[x_1\;x_2\;...\;x_m]$, seja $P(t)$ o polinômio
+
+\begin{center}
+ $P(t)=x_mt^{m-1}+x_{m-1}t^{m-2}+...+x_2t+x_1$
+\end{center}
+
+com coeficientes dados pelos símbolos de mensagem. Assim, $P(t)$ é m polinômio de grau no máximo $m-1$ para uma variável $t$, com coeficientes em
+$\mathbb{Z}_p$. Então o vetor de código \textbf{a} para este vetor de mensagem é a lista dos $n$ primeiros valores do polinômio $P(t)$:
+
+\begin{center}
+ \textbf{a}$=[\alpha_1\;\alpha_2\;...\;\alpha_n]=[P(0)\;P(1)\;...\;P(n-1)]$''
+\end{center}
+
+A partir dessa definição, é possível traçar o entendimento do relacionamento de códigos RS com os corpos finitos.
+
+% Definition 4. Let p be a prime number and let m ≤ n ≤ p. The Reed-Solomon code over the
+% field Zp with m message symbols and n code symbols is defined as follows. Given a message vector
+% x1 x2 . . . xm , let P (t) be the polynomial
+% m−1 m−2P (t) = xm t + xm−1 t + · · · + x2 t + x1
+% with coefficients given by the message symbols. Thus P (t) is a polynomial of degree at most m − 1
+% in one variable t, with coefficients in Zp . Then the code vector a for this message vector is the list
+% of the first n values of the polynomial P (t):
+% a = a1 a2 . . . an = P (0) P (1) . . . P (n − 1)
+% (evaluated using modular arithmetic in Zp).
+
+
+Por motivos de maior clarificação, é mostrada na Figura ~\ref{fig:rs-codeword} (adaptada de ~\cite{Clarke02}) um diagrama de uma \textit{codeword} Reed-Solomon, ou seja, a estrutura da informação a ser transmitida,
+após ter sido acrescentada à informação original os bits de redundância para realizar a correção devida de erros.
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.8]{./Figures/9}
+      \caption{Uma \textit{codeword} RS para \textit{k} símbolos de informação de \textit{m} bits cada e \textit{2t} símbolos de paridade.}
+      \label{fig:rs-codeword}
+  \end{center}
+\end{figure}
+
+O fato de o código ser \textit{cíclico} traduz que o mesmo possui a propriedade de geração de outra \textit{codeword} caso os símbolos de informação sejam
+ciclicamente deslocados. Seguindo esta mesma linha de raciocínio, é possível definir códigos RS como \textit{lineares}, isto é, ao adicionar duas \textit{codewords}, gera-se outra. O seu poder
+de correção de erros provém do fato supracitado de ser derivado de códigos BCH, porém possuindo símbolos \textit{multibits}. Isto torna o código particularmente bom para
+lidar com rajadas de erros, pois, apesar de um símbolo possuir todos os seus bits em erro, ele irá contar apenas como um erro de símbolo em termos da capacidade de correção
+do código.
+
+Para diferentes parâmetros dados a um código, diferentes níveis de proteção são gerados e este fato afeta também a complexidade de implementação. Por esta razão, códigos RS são definidos como um código (\textit{n},\textit{k}),
+onde \textit{n} é o comprimento do bloco (\textit{codeword}) em símbolos e \textit{k} é o número de símbolos de informação na mensagem.
+
+Onde, para códigos RS padrão:
+\begin{center}
+$n\leq2^m-1$ 
+\end{center}
+
+e \textit{m} é o número de bits em um símbolo. Para uma igualdade, o código é considerado ter sua versão completa, enquanto uma desigualdade reflete uma forma reduzida do mesmo.
+Para dados \textit{n} e \textit{k}, há \textit{n-k} símbolos de paridade, ou seja, símbolos de redundância adicionados ao código original e \textit{t} símbolos podem ser corrigidos
+em um bloco, onde~\cite{Clarke02}.:
+
+\begin{center}
+$\left\{\begin{matrix}
+t=\frac{(n-k)}{2}, \; n-k \; par \\
+t=\frac{(n-k-1)}{2}, \; n-k \;impar
+\end{matrix}\right.$
+\end{center}
+
+Por causa de sua estrutura, os códigos Reed-Solomon alcançam a mais alta distância mínima de código possível para qualquer código linear para blocos de entrada e de
+saída com o mesmo comprimento. Para códigos não binários, a distância entre entre as duas \textit{codewords} é definida (análoga à distância de Hamming) como o número de símbolos
+nos quais as sequências diferem. Para códigos Reed-Solomon, a menor distância de código é dada por:
+
+\begin{center}
+ $d_{min}=n-k+1$
+\end{center}
+
+Esse código é capaz de corrigir qualquer combinação de $t$ ou menos erros, onde $t$ pode ser expresso como:
+
+\begin{center}
+ $t=\left \lfloor \frac{d_{min}-1}{2} \right \rfloor = \left \lfloor \frac{n-k}{2} \right \rfloor$
+\end{center}
+
+A equação acima reflete apenas que, para corrigir $t$ erros, o código não precisa de mais do que $2t$ símbolos de paridade. Isto pode ser interpretado como: para
+cada erro, existe um símbolo que o identifica e outro que o corrige.
+
+Qualquer código linear é capaz de corrigir $n-k$ padrões de supressão de símbolos, se os $n-k$ símbolos suprimidos existirem nos símbolos de paridade. Entretanto,
+códigos RS são capazes de corrigir qualquer conjunto de $n-k$ símbolos suprimidos dentro do bloco. Códigos RS podem ser projetados para ter qualquer redundância, mas
+a complexidade de uma implementação de alta velocidade aumenta com a redundância. Assim, os códigos RS mais atrativos possuem altas taxas de código (baixa redundância)~\cite{Sklar00}.
+
+
+\subsection{Codificação}
+
+\subsubsection{O polinômio gerador de código}
+
+A informação de entrada (símbolos) precisa ser arranjada de forma a adicionar redundância a ela, para vencer as barreiras do canal. Esse procedimento é puramente algébrico
+e envolve a formulação dos corpos de Galois. Para que se realize a codificação, existe um polinômio de $n-k=2t$ componentes, cujas raízes ($\alpha$) são elementos consecutivos
+do corpo de Galois; isto é feito para maximizar as propriedades de correção do código. Logo, o polinômio, chamado de polinômio gerador de código, é da forma:
+
+\begin{center}
+ $g(x)=(x+\alpha^b)(x+\alpha^{b+1})...(x+\alpha^{b+2t-1})$
+\end{center}
+
+O valor inicial de $b$ é arbitrário, podendo ser de $0$ até $2^m-1$, onde valores diferente geram códigos diferentes e precisam ser sincronizados,
+tanto no codificador, como no decodificador.
+A explicação do processo será realizada em cima de um exemplo:
+
+Tome-se um código RS (15,11). Logo, $m=4$ e $t=\frac{n-k}{2}=2$. O código pode, então, corrigir erros de até dois símbolos.
+Para $m=4$, o polinômio gerador do código seria da forma:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $g(x)$	& $=(x+\alpha^0)(x+\alpha)(x+\alpha^2)(x+\alpha^3)$ \\ 
+			& $=(x+1)(x+2)(x+4)(x+8)$		
+  \end{tabular}
+\end{center}
+
+Fazendo a multiplicação direta e respeitando as operações de adição e multiplicação internas ao corpo, e com o auxílio das tabelas de referência (\textit{lookup})
+contidas no Apêndice A, obtém-se o seguinte resultado:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $g(x)$	& $=x^4+15x^3+3x^2+x+12$ \\ 
+			& $=\alpha^0x^4+\alpha^{12}x^3+\alpha^4x^2+\alpha^0x+\alpha^6$		
+  \end{tabular}
+\end{center}
+
+\subsubsection{Geração do código}
+
+A informação que será finalmente transmitida é é representada por um polinômio de ordem $k-1$, da forma:
+
+\begin{center}
+ $m(x)=m_{k-1}x^{k-1}+...+m_1x+m_0$
+\end{center}
+
+Cada elemento do polinômio acima é um símbolo pertencente ao corpo de informação de $m$ bits, do corpo GF($2^m$), logo o seu primeiro elemento ($m_{k-1}$)
+representa o primeiro símbolo da mensagem.
+
+A mensagem é formada ao relacionar o polinômio de mensagem com o polinômio gerador de código, através de uma relação algébrica de polinômios. 
+Isto é necessário para que a \textit{codeword} a ser transmitida obtenha o comprimento devido, contendo os símbolos de informação adicionados aos
+símbolos de redundância; por esta razão, o polinômio resultante ($t(x)$) assume o grau de $(k-1)(n-k)=n-1$:
+
+\begin{center}
+\large
+ $\frac{m(x)x^{n-k}}{g(x)}=q(x)+\frac{r(x)}{g(x)}$
+\end{center}
+
+O que se busca na relação acima é o resto $r(x)$, que servirá para formar a \textit{codeword} a ser transmitida:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $t(x)$	& $=m(x)x^{n-k}+r(x)$ \\ 
+			& $=m_{k-1}x^{n-1}+...+m_0x^{n-k}+r_{n-k-1}x^{n-k-1}+...+r_0$		
+  \end{tabular}
+\end{center}
+
+Reproduzindo, assim, a forma polinomial da \textit{codeword} da Figura~\ref{fig:rs-codeword}
+
+Exemplificando, caso se quisesse transmitir os valores 4, 8 e 9 para uma mensagem de símbolos de 3 bits em um código (7,3), o seu polinômio seria da forma:
+
+\begin{center}
+ $4x^2+8x+9$
+\end{center}
+
+O aumento do grau do polinômio deve ser de 2. Multiplica-se então por $x^2$, gerando o polinômio de mensagem:
+
+\begin{center}
+ $4x^4+8x^3+9x^2$
+\end{center}
+
+\subsection{Detecção de erros}
+
+Para a detecção de erros, o receptor analisa a forma do polinômio recebido, para que se faça a devida correção. A condição para uma mensagem sem erros é que o polinômio da mensagem recebida seja sempre divisível pelo polinômio gerador. No polinômio:
+
+\begin{center}
+$m(x)x^{n-k}=g(x)q(x)+r(x)$
+
+$\therefore m(x)x^{n-k}+r(x)=g(x)q(x)$
+\end{center}
+
+O polinômio acima demonstra que a \textit{codeword} recebida (lado esquerdo da equação) é um múltiplo do polinômio gerador, logo, se a divisão não contiver nenhum resto, então não houve erros~\cite{Clarke02}.
+
+Os possíveis erros são da seguinte forma:
+
+\begin{center}
+$e(x)=\sum_{i=0}^{n-1}e_ix^i$
+\end{center}
+
+onde $n$ é o comprimento da \textit{codeword}, $e_i$ é o formato do erro em binários e $x^i$ é o elemento do corpo finito que forma a mensagem transmitida. Por exemplo, em um código (7,3),
+um erro aleatório seria da forma:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $e(x)$	& $=0+0x+\alpha^2x^2+0x^3+0x^4+\alpha^5x^5+0x^6$ \\ 
+			& $=(000)+(000)x+(001)x^2+(000)x^3+(000)x^4+(111)x^5+(000)x^6$		
+  \end{tabular}
+\end{center}
+
+Os elementos $\alpha$ representam elementos do corpo finito e os elementos $x$ são os símbolos da \textit{codeword} que sofrerão influência do erro.
+
+O polinômio $R(x)$ da mensagem que chega ao receptor, após enfrentar o canal, é representado por:
+
+\begin{center}
+ $R(x)=u(x)+e(x)$
+\end{center}
+
+então, caso queira-se transmitir a \textit{codeword}:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $u(x)$	& $=\alpha^0+\alpha^2x+\alpha^4x^2+\alpha^6x^3+\alpha^1x^4+\alpha^3x^5+\alpha^5x^6$ \\ 
+			& $=(100)+(001)x+(011)x^2+(101)x^3+(010)x^4+(110)x^5+(111)x^6$		
+  \end{tabular}
+\end{center}
+
+a mensagem que chegará ao receptor sofrerá alterações (erro) nos elementos $x^2$ e $x^5$, resultando em:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $R(x)$	& $=\alpha^0+\alpha^2x+\alpha^1x^2+\alpha^6x^3+\alpha^1x^4+\alpha^2x^5+\alpha^5x^6$	\\ 
+			& $=(100)+(001)x+(010)x^2+(101)x^3+(010)x^4+(001)x^5+(111)x^6$				
+  \end{tabular}
+\end{center}
+
+O código apresentado no exemplo acima é capaz de corrigir $\frac{7-3}{2}=2$ erros. A detecção é feita através da análise do resto da divisão
+do polinômio recebido pelo polinômio gerador, porém a correção é mais facilmente realizada para a forma binária, onde o código apenas detecta
+em que posição os bits devem ser alterados de \textbf{1} para \textbf{0} e vice-versa. Na forma de índices não binários o código precisa saber 
+não só a posição, mas que valor será colocado no local do erro~\cite{Sklar00}. Existem diversas técnicas para que isso seja feito, e uma delas será analisada
+na seção seguinte.
+
+\subsection{Decodificação}
+
+Há diversas formas de se realizar a decodificação de polinômios RS e uma delas será abordada nesta seção. Conhecido como cálculo de \textit{syndrome}, este método
+analisa o polinômio de acordo com suas raízes, ou seja, partindo do princípio que a mensagem recebida $u(x)$ é um múltiplo do polinômio gerador $g(x)$, então as
+raízes de $g(x)$ são também raízes de $u(x)$, e, para $n-k=4$ fatores desconhecidos (2 erros a serem localizados e 2 valores a serem substituídos), são necessárias 4
+equações que façam a análise de erro. Essas equações são definidads como $S_i, i=1,...,n-k$. Caso todas as equações $S_i$ sejam iguais a \textbf{0}, significa
+que não houve erros, caso contrário, se pelo menos uma das equações tiver valor diferente, erros serão detectados. O cálculo das equações é da forma:
+
+\begin{center}
+ $S_i=r(x)|_{x=\alpha^i}=r(\alpha^i)\;\; i=1,...,n-k$
+\end{center}
+
+Como exemplo, tome-se a mensagem recebida da seção anterior. O cálculo de suas \textit{syndromes} é feito da seguinte maneira:
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $S_1$		& $=R(\alpha)=\alpha^0+\alpha^2\alpha+\alpha^1\alpha^2+\alpha^6\alpha^3+\alpha^1\alpha^4+\alpha^2\alpha^5+\alpha^5\alpha^6$	\\ 
+			& $=\alpha^0+\alpha^3+\alpha^3+\alpha^2+\alpha^5+\alpha^0+\alpha^4$							\\
+			& $=\alpha^6$
+  \end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $S_2$		& $=R(\alpha^2)=\alpha^0+\alpha^2\alpha^2+\alpha^1\alpha^4+\alpha^6\alpha^6+\alpha^1\alpha^8+\alpha^2\alpha^{10}+\alpha^5\alpha^{12}$	\\ 
+			& $=\alpha^0+\alpha^4+\alpha^5+\alpha^5+\alpha^2+\alpha^5+\alpha^3$									\\
+			& $=\alpha^5$
+
+  \end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $S_3$		& $=R(\alpha^3)=\alpha^0+\alpha^2\alpha^3+\alpha^1\alpha^6+\alpha^6\alpha^9+\alpha^1\alpha^{12}+\alpha^2\alpha^{15}+\alpha^5\alpha^{18}$	\\ 
+			& $=\alpha^0+\alpha^5+\alpha^0+\alpha^1+\alpha^6+\alpha^3+\alpha^2$										\\
+			& $=\alpha^5$
+  \end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{c l}
+    \centering
+	  $S_4$		& $=R(\alpha^4)=\alpha^0+\alpha^2\alpha^4+\alpha^1\alpha^8+\alpha^6\alpha^{12}+\alpha^1\alpha^{16}+\alpha^2\alpha^{20}+\alpha^5\alpha^{24}$	\\ 
+			& $=\alpha^0+\alpha^6+\alpha^2+\alpha^4+\alpha^3+\alpha^1+\alpha^1$										\\
+			& $=\alpha^6$
+  \end{tabular}
+\end{center}
+
+Como pelo menos uma (todas) acusou valores diferentes de \textbf{0}, conclui-se que há erros na mensagem recebida.

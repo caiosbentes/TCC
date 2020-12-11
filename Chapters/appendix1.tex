@@ -1,0 +1,174 @@
+%Tabela de resultados de adições em um corpo GF($2^4$)
+
+\thispagestyle{fancy}
+\renewcommand{\thesubsection}{\Alph{section}}
+\section{Tabelas de codificação para compressão JPEG}
+\label{ap_JPEG}
+
+Objetivando otimizar o processo de compressão JPEG, tabelas Huffman pré definidas são utilizadas para a codificação de entropia. Neste apêndice explica-se como utilizar estas tabelas.
+
+Considerando que se deseja codificar um bloco transformado e quantizado,
+\begin{minipage}{1.\textwidth}
+\centering
+[-26 -3 1 -3 -2 -6 2 -4 1 -4 1 1 5 0 2 0 0 -1 2 0 0 0 0 0 -1 -1 EOB]
+\end{minipage}
+devemos separar este processo em duas partes:
+\begin{enumerate}
+\item Codificação do coeficiente DC: supondo que o coeficiente DC do macrobloco imediatamente anterior é $ (-17) $, \footnote{Se for o primeiro macrobloco de uma linha utila-se o valor 0.} tem-se que, segundo a tabela \ref{Cat-coef-JPEG}, a diferença $ d = [-26-(-17)] $ ou $ d=-9 $ pertence à categoria $ k=4 $. Conforme a tabela \ref{Cod-DC}, o código base utilizado para a categoria 4 é 101 e seu tamanho total é de 7 bits, em que os $ k $ bits restantes devem ser os $ k $ bits menos significativos da diferença positiva $ d $ ou os $ k $ bits menos significativos da diferença negativa $ d $ menos $1$. Para a diferença $ d = -9$ os $k$ bits menos significativos são (0111)-1 ou 0110. Logo, a palavra código para o coeficiente DC em questão é 1010110.
+
+\item Codificação do coeficiente AC: sua diferença em relação a codificação de coeficientes DC é que ela leva em consideração o número de zeros que antecedem os coeficientes AC não nulos. Logo o primeiro coeficiente AC não nulo $(-3)$ é codificado como 0100, pois segundo a tabela \ref{Cat-coef-JPEG} ele pertence à categoria 2 sem zeros antecedentes, dando origem ao código base 01, e os dois bits restantes são obtidos de maneira similar a utilizada na codificação de coeficientes DC. 
+\end{enumerate}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Faixa                                                      & \begin{tabular}[c]{@{}c@{}}Categoria da\\ diferença DC\end{tabular} & \begin{tabular}[c]{@{}c@{}}Categoria\\ AC\end{tabular} \\ \hline
+0                                                          & 0                                                                   & N/A                                                    \\ \hline
+-1, 1                                                      & 1                                                                   & 1                                                      \\ \hline
+-3, -2, 2, 3                                               & 2                                                                   & 2                                                      \\ \hline
+-7,..., -4, 4,..., 7                                       & 3                                                                   & 3                                                      \\ \hline
+-15,..., -8, 8,..., 15                                     & 4                                                                   & 4                                                      \\ \hline
+-31,..., -16, 16,..., 31                                   & 5                                                                   & 5                                                      \\ \hline
+-63,..., -32, 32,..., 63                                   & 6                                                                   & 6                                                      \\ \hline
+-127,..., -64, 64,..., 127                                 & 7                                                                   & 7                                                      \\ \hline
+-255,..., -128, 128,..., 255                               & 8                                                                   & 8                                                      \\ \hline
+-511,..., -256, 256,..., 511                               & 9                                                                   & 9                                                      \\ \hline
+-1023,..., -512, 5012,..., 1023                            & A                                                                   & A                                                      \\ \hline
+-2047,..., -1024, 1024,..., 2047                           & B                                                                   & B                                                      \\ \hline
+-4095,..., -2048, 2048,..., 4095                           & C                                                                   & C                                                      \\ \hline
+-8191,..., -4096, 4096,..., 8191                           & D                                                                   & D                                                      \\ \hline
+-16383,..., -8192, 8192,..., 16383                         & E                                                                   & E                                                      \\ \hline
+\multicolumn{1}{|l|}{-32767,..., -16384, 16384,..., 32767} & F                                                                   & N/A                                                    \\ \hline
+\end{tabular}
+\caption{Categorias de coeficientes de codificação JPEG.}
+\label{Cat-coef-JPEG}
+\end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Categoria & \begin{tabular}[c]{@{}c@{}}Código\\ Base\end{tabular} & Tamanho & Categoria & \begin{tabular}[c]{@{}c@{}}Código \\ Base\end{tabular} & Tamanho \\ \hline
+0         & 010                                                   & 3       & 6         & 1110                                                   & 10      \\ \hline
+1         & 011                                                   & 4       & 7         & 11110                                                  & 12      \\ \hline
+2         & 100                                                   & 5       & 8         & 111110                                                 & 14      \\ \hline
+3         & 00                                                    & 5       & 9         & 1111110                                                & 16      \\ \hline
+4         & 101                                                   & 7       & A         & 11111110                                               & 18      \\ \hline
+5         & 110                                                   & 8       & B         & 111111110                                              & 20      \\ \hline
+\end{tabular}
+\caption{Códigos JPEG DC.}
+\label{Cod-DC}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\begin{tabular}[c]{@{}c@{}}Zeros/\\ Categoria\end{tabular} & Código  base     & Tamanho & \begin{tabular}[c]{@{}c@{}}Zeros/\\ Categoria\end{tabular} & Código base      & Tamanho \\ \hline
+0/0                                                        & 1010             & 4       & 8/1                                                        & 111111000        & 9       \\ \hline
+0/1                                                        & 00               & 2       & 8/2                                                        & 111111111000000  & 15      \\ \hline
+0/2                                                        & 01               & 2       & 8/3                                                        & 1111111110110110 & 16      \\ \hline
+0/3                                                        & 100              & 3       & 8/4                                                        & 1111111110110111 & 16      \\ \hline
+0/4                                                        & 1011             & 4       & 8/5                                                        & 1111111110111000 & 16      \\ \hline
+0/5                                                        & 11010            & 5       & 8/6                                                        & 1111111110111001 & 16      \\ \hline
+0/6                                                        & 1111000          & 7       & 8/7                                                        & 1111111110111010 & 16      \\ \hline
+0/7                                                        & 11111000         & 8       & 8/8                                                        & 1111111110111011 & 16      \\ \hline
+0/8                                                        & 1111110110       & 10      & 8/9                                                        & 1111111110111100 & 16      \\ \hline
+0/9                                                        & 1111111110000010 & 16      & 8/A                                                        & 1111111110111101 & 16      \\ \hline
+0/A                                                        & 1111111110000011 & 16      & 9/1                                                        & 111111001        & 9       \\ \hline
+1/1                                                        & 1100             & 4       & 9/2                                                        & 1111111110111110 & 16      \\ \hline
+1/2                                                        & 11011            & 5       & 9/3                                                        & 1111111110111111 & 16      \\ \hline
+1/3                                                        & 1111001          & 7       & 9/4                                                        & 1111111111000000 & 16      \\ \hline
+1/4                                                        & 111110110        & 9       & 9/5                                                        & 1111111111000001 & 16      \\ \hline
+1/5                                                        & 11111110110      & 11      & 9/6                                                        & 1111111111000010 & 16      \\ \hline
+1/6                                                        & 1111111110000100 & 16      & 9/7                                                        & 1111111111000011 & 16      \\ \hline
+1/7                                                        & 1111111110000101 & 16      & 9/8                                                        & 1111111111000100 & 16      \\ \hline
+1/8                                                        & 1111111110000110 & 16      & 9/9                                                        & 1111111111000101 & 16      \\ \hline
+1/9                                                        & 1111111110000111 & 16      & 9/A                                                        & 1111111111000110 & 16      \\ \hline
+1/A                                                        & 1111111110001000 & 16      & A/1                                                        & 111111010        & 9       \\ \hline
+2/1                                                        & 11100            & 5       & A/2                                                        & 1111111111000111 & 16      \\ \hline
+2/2                                                        & 11111001         & 8       & A/3                                                        & 1111111111001000 & 16      \\ \hline
+2/3                                                        & 1111110111       & 10      & A/4                                                        & 1111111111001001 & 16      \\ \hline
+2/4                                                        & 111111110100     & 12      & A/5                                                        & 1111111111001010 & 16      \\ \hline
+2/5                                                        & 1111111110001001 & 16      & A/6                                                        & 1111111111001011 & 16      \\ \hline
+2/6                                                        & 1111111110001010 & 16      & A/7                                                        & 1111111111001100 & 16      \\ \hline
+2/7                                                        & 1111111110001011 & 16      & A/8                                                        & 1111111111001101 & 16      \\ \hline
+\end{tabular}
+\caption{Códigos JPEG AC.}
+\label{Cod-AC1}
+\end{table}
+
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\begin{tabular}[c]{@{}c@{}}Zeros/\\ Categoria\end{tabular} & Código  base     & Tamanho & \begin{tabular}[c]{@{}c@{}}Zeros/\\ Categoria\end{tabular} & Código base      & Tamanho \\ \hline
+2/8                                                        & 1111111110001100 & 16      & A/9                                                        & 1111111111001110 & 16      \\ \hline
+2/9                                                        & 1111111110001101 & 16      & A/A                                                        & 1111111111001111 & 16      \\ \hline
+2/A                                                        & 1111111110001110 & 16      & B/1                                                        & 1111111001       & 10      \\ \hline
+3/1                                                        & 111010           & 6       & B/2                                                        & 1111111111010000 & 16      \\ \hline
+3/2                                                        & 111110111        & 9       & B/3                                                        & 1111111111010001 & 16      \\ \hline
+3/3                                                        & 111111110101     & 12      & B/4                                                        & 1111111111010010 & 16      \\ \hline
+3/4                                                        & 1111111110001111 & 16      & B/5                                                        & 1111111111010011 & 16      \\ \hline
+3/5                                                        & 1111111110010000 & 16      & B/6                                                        & 1111111111010100 & 16      \\ \hline
+3/6                                                        & 1111111110010001 & 16      & B/7                                                        & 1111111111010101 & 16      \\ \hline
+3/7                                                        & 1111111110010010 & 16      & B/8                                                        & 1111111111010110 & 16      \\ \hline
+3/8                                                        & 1111111110010011 & 16      & B/9                                                        & 1111111111010111 & 16      \\ \hline
+3/9                                                        & 1111111110010100 & 16      & B/A                                                        & 1111111111011000 & 16      \\ \hline
+3/A                                                        & 1111111110010101 & 16      & C/1                                                        & 1111111010       & 10      \\ \hline
+4/1                                                        & 111011           & 6       & C/2                                                        & 1111111111011001 & 16      \\ \hline
+4/2                                                        & 1111111000       & 10      & C/3                                                        & 1111111111011010 & 16      \\ \hline
+4/3                                                        & 1111111110010110 & 16      & C/4                                                        & 1111111111011011 & 16      \\ \hline
+4/4                                                        & 1111111110010111 & 16      & C/5                                                        & 1111111111011100 & 16      \\ \hline
+4/5                                                        & 1111111110011000 & 16      & C/6                                                        & 1111111111011101 & 16      \\ \hline
+4/6                                                        & 1111111110011001 & 16      & C/7                                                        & 1111111111011110 & 16      \\ \hline
+4/7                                                        & 1111111110011010 & 16      & C/8                                                        & 1111111111011111 & 16      \\ \hline
+4/8                                                        & 1111111110011011 & 16      & C/9                                                        & 1111111111100000 & 16      \\ \hline
+4/9                                                        & 1111111110011100 & 16      & C/A                                                        & 1111111111100001 & 16      \\ \hline
+4/A                                                        & 1111111110011101 & 16      & D/1                                                        & 11111111000      & 10      \\ \hline
+5/1                                                        & 1111010          & 7       & D/2                                                        & 1111111111100010 & 16      \\ \hline
+5/2                                                        & 11111110111      & 11      & D/3                                                        & 1111111111100011 & 16      \\ \hline
+5/3                                                        & 1111111110011110 & 16      & D/4                                                        & 1111111111100100 & 16      \\ \hline
+5/4                                                        & 1111111110011111 & 16      & D/5                                                        & 1111111111100101 & 16      \\ \hline
+5/5                                                        & 1111111110100000 & 16      & D/6                                                        & 1111111111100110 & 16      \\ \hline
+5/6                                                        & 1111111110100001 & 16      & D/7                                                        & 1111111111100111 & 16      \\ \hline
+\end{tabular}
+\caption{Códigos JPEG AC (continuação.)}
+\label{Cod-AC2}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\begin{tabular}[c]{@{}c@{}}Zeros/\\ Categoria\end{tabular} & Código  base     & Tamanho & \begin{tabular}[c]{@{}c@{}}Zeros/\\ Categoria\end{tabular} & Código base      & Tamanho \\ \hline
+5/7                                                        & 1111111110100010 & 16      & D/8                                                        & 1111111111101000 & 16      \\ \hline
+5/8                                                        & 1111111110100011 & 16      & D/9                                                        & 1111111111101001 & 16      \\ \hline
+5/9                                                        & 1111111110100100 & 16      & D/A                                                        & 1111111111101010 & 16      \\ \hline
+5/A                                                        & 1111111110100101 & 16      & E/1                                                        & 1111111111101011 & 11      \\ \hline
+6/1                                                        & 1111011          & 7       & E/2                                                        & 1111111111101100 & 16      \\ \hline
+6/2                                                        & 111111110110     & 12      & E/3                                                        & 1111111111101101 & 16      \\ \hline
+6/3                                                        & 1111111110100110 & 16      & E/4                                                        & 1111111111101110 & 16      \\ \hline
+6/4                                                        & 1111111110100111 & 16      & E/5                                                        & 1111111111101111 & 16      \\ \hline
+6/5                                                        & 1111111110101000 & 16      & E/6                                                        & 1111111111110000 & 16      \\ \hline
+6/6                                                        & 1111111110101001 & 16      & E/7                                                        & 1111111111110001 & 16      \\ \hline
+6/7                                                        & 1111111110101010 & 16      & E/8                                                        & 1111111111110010 & 16      \\ \hline
+6/8                                                        & 1111111110101011 & 16      & E/9                                                        & 1111111111110011 & 16      \\ \hline
+6/9                                                        & 1111111110101100 & 16      & E/A                                                        & 1111111111110100 & 16      \\ \hline
+6/A                                                        & 1111111110101101 & 16      & F/0                                                        & 11111111001      & 11      \\ \hline
+7/1                                                        & 11111010         & 8       & F/1                                                        & 1111111111110101 & 16      \\ \hline
+7/2                                                        & 111111110111     & 12      & F/2                                                        & 1111111111110110 & 16      \\ \hline
+7/3                                                        & 1111111110101110 & 16      & F/3                                                        & 1111111111110111 & 16      \\ \hline
+7/4                                                        & 1111111110101111 & 16      & F/4                                                        & 1111111111111000 & 16      \\ \hline
+7/5                                                        & 1111111110110000 & 16      & F/5                                                        & 1111111111111001 & 16      \\ \hline
+7/6                                                        & 1111111110110001 & 16      & F/6                                                        & 1111111111111010 & 16      \\ \hline
+7/7                                                        & 1111111110110010 & 16      & F/7                                                        & 1111111111111011 & 16      \\ \hline
+7/8                                                        & 1111111110110011 & 16      & F/8                                                        & 1111111111111100 & 16      \\ \hline
+7/9                                                        & 1111111110110100 & 16      & F/9                                                        & 1111111111111101 & 16      \\ \hline
+7/A                                                        & 1111111110110101 & 16      & F/A                                                        & 1111111111111110 & 16      \\ \hline
+\end{tabular}
+\caption{Códigos JPEG AC (continuação).}
+\label{Cod-AC3}
+\end{table}

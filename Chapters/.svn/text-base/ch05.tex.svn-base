@@ -1,0 +1,22 @@
+%Capitulo 5 - Considerações finais%
+
+\section{Conclusões}
+
+A plataforma GNU Radio é extremamente eficiente para a pesquisa no ramo das telecomunicações, ao facilitar o aproveitamento de blocos de processamento (que já são diversos) e o desenvolvimento de outros. Isto tornou possível o desenvolvimento de códigos capazes de simular algoritmos de codificação do canal, de forma próxima ao que acontece no mundo real das telecomunicações.
+Apesar de os códigos desenvolvidos terem apresentado certo desfalque quanto aos resultados reais, ainda se apresentam como ótimas referências para testes de aplicações candidatas a implantação em projetos de pesquisa.  Sua interface amigável possibilitou o casamento com a biblioteca gtk+ e será certamente evoluída para o uso no âmbito dos projetos.
+Em termos de adversidades, a plataforma apresentou desafios iniciais e retardantes, mas não compremetedores. Além da esfera de desenvolvimento e aplicação, estão os problemas de instalação inicial, visto que,
+localizado em um ambiente UNIX, diversas dependências eram necessárias, e diversas tentativas foram feitas para que se pudesse acoplar as bibliotecas com o sistema simulador desenvolvido pelo próprio laboratório.
+
+Em se tratando da Codificação de Canal, a base matemática necessária para um contato inicial é bastante extensa e profunda, requerendo ao pesquisador dessa área dedicar horas de estudo de matemática
+pura e aplicada, visto que a teoria de corpos finitos é bastante extensa e aplicável em outras áreas e, apesar de já bastante difundido na literatura, o assunto apresentou poucos documentos
+básicos e explicativos para um pesquisador iniciante de como dar início à pesquisa e implementação em código, exigindo um estudo completo desde o início da teoria, porém não impediu a implementação de sua profunda
+teoria, explorada, e aplicada através de uma aplicação, simples, mas com sucesso de aliar teoria e prática da codificação de canal.
+
+\section{Trabalhos futuros}
+
+A partir da teoria e procedimentos apresentados neste trabalho e de todas as vantagens apresentadas, são plenamente viáveis, e de interesse, implementações futuras na interface
+do usuário com atualizações para suporte a outros tipos de codificação, como Trellis-Coded-Modulation, LDPC e Códigos Turbo. Estes tipos de codificação já se encontram em desenvolvimento
+no âmbito dos projetos do LaPS e serão acrescentados às versões futuras. O principal objetivo da sequência do desenvolvimento é facilitar a análise e expandir para uma forma de facilitação a alunos novatos nos projetos de telecomunicações.
+
+As versões futuras serão dotadas de uma documentação explicativa, que forneça não só as diretrizes e ferramentas disponíveis do \textit{software}, mas também uma base teórica em
+telecomunicações, para o treinamento de alunos novatos nos projetos, vista a falta de conhecimento específico que muitos apresentam ao se juntarem aos projetos.

@@ -1,0 +1,371 @@
+%Capítulo 2 - A plataforma GNU Radio%
+
+\section{Introdução}
+
+Nos últimos anos, muitas técnicas de Transmissão Digital foram desenvolvidas, com a finalidade de trazer melhores
+condições de comunicação e alcance das melhores taxas possíveis de transmissão de dados. Isto só foi possível devido 
+à pesquisa intensiva realizada em centros de pesquisa, situados em grandes companhias de telecomunicações e até mesmo em
+universidades.
+
+A importância de se trabalhar com simulações do mundo real em \textit{software} é vastamente necessária nos dias atuais,
+por se tratar de uma importante técnica, antes que o produto final (sistema) encontre seu funcionamento adequado.
+
+Dentro deste contexto, entram em foco ferramentas capazes de trazer confiança, auxílio, portabilidade e desempenho para
+a pesquisa e o ensino. Tais fatores principais podem ser encontrados na plataforma que faz parte do escopo deste trabalho:
+a plataforma GNU Radio.
+
+GNU Radio é um \textit{software} fundado, e originalmente mantido por Eric Blossom~\cite{Edwards05}~\cite{gr2} e atualmente desenvolvido e mantido livremente por membros
+da comunidade GNU Radio, segundo a licença GPL, sendo parte do projeto GNU e seu código por inteiro é de \textit{copyright} da Free Software Foundation.
+O sistema possui inúmeras vantagens, como exemplo, o fácil interfaceamento com os sistemas físicos de RF de baixo custo conhecidos como USRP, capazes de
+realizar conexão direta com a máquina onde o \textit{software} é funcional e transmitir dados do mundo real para o mundo computacional
+e gerar gráficos e análises sobre esses dados~\cite{gr3}. O \textit{toolkit} oferece inúmeros blocos de processamento de sinais pré-definidos, tentando se aproximar o máximo
+possível de uma antena real, assim como oferece a facilidade de construção de blocos próprios do usuário~\cite{gr1}. Como o periférico USRP não faz parte do escopo do trabalho,
+ele será brevemente abordado em uma seção subsequente.
+
+Ao longo deste capítulo serão abordados tópicos que esmiúçam a estrutura interna do sistema, com o intuito de ilustrar suas capabilidades,
+vantagens e aplicações. E antes que se possa adentrar o corpo do \textit{toolkit}, para que se faça a análise de sua estrutura, faz-se mister falar brevemente sobre o conceito em que ele foi formado: o Rádio Cognitivo.
+
+\section{Rádio cognitivo}
+
+% A maioria das referências desta seção podem ser encontradas em en.wikipedia.org/wiki/Cognitive_radio
+
+Um rádio cognitivo é um transceptor que é ciente, adaptativo, e capaz de aprender. Ele pode ser enxergado e compreendido como um pacote de \textit{software} inteligente
+(máquina cognitiva), o qual controla uma plataforma de rádio definido em \textit{software} (Software-Defined Radio), que será explicado mais adiante. Essa máquina cognitiva possui uma série de laços (\textit{loops})
+aninhados realizando um ciclo de cognição, baseando-se em dados pré-definidos em sua estrutura, assim como métodos de tomada de decisão para otimizar processamentos definidos pelo
+usuário. Sua aplicação física pode ser observada na Figura \ref{fig:cr}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[scale=0.7]{./Figures/1}
+      \caption{Esquema ilustrativo de Rádio Cognitivo}
+      \label{fig:cr}
+  \end{center}
+\end{figure}
+
+
+Na prática, seu funcionamento geral é constituído da agregação de métodos de tomada de decisão amplamente difundidos, porém nem sempre representados conjuntamente, como:
+algoritmos genéticos, teoria de decisão baseada em casos de uso e redes neurais artificiais. Tipos possíveis de problemas práticos que o CR possa encontrar são os de implementação, no
+momento em que dados do mundo real são passados do rádio para a máquina interna, e esta, simultaneamente, precisa manter o controle e realizar as alterações no rádio de acordo com
+suas necessidades~\cite{Le07}.
+
+
+Em outras palavras, Rádio Cognitivo é um tipo de rádio capaz de alterar os seus parâmetros automaticamente para poder adequar-se
+às condições do meio. Isso envolve parâmetros como frequência, modulação, forma de onda, protocolo~\cite{Wipro02}, ou como resumido por pesquisadores da Virginia Polytechnic Institute and State University,
+é um ``rádio definido por \textit{software} com um cérebro de máquina cognitivo''~\cite{Virginia06}. Seu funcionamento pode ser idealizado na Figura \ref{fig:fluxograma-cr}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=120mm,height=80mm]{./Figures/2}
+      \caption{Fluxograma básico de funcionamento de um CR}
+      \label{fig:fluxograma-cr}
+  \end{center}
+\end{figure}
+
+Por sua flexibilidade, facilidade de manuseio e portabilidade, esse paradigma de telecomunicações tem ganhado espaço nos grandes centros de pesquisa e cada dia mais recebe colaboradores (em sua grande maioria, espontâneos) para o seu desenvolvimento.
+É neste âmbito que a plataforma GNU Radio tem se sustentado e promete ser parte dos grandes avanços em telecomunicações para os anos que virão\cite{KD7}\cite{Valerio08}.
+
+\subsection{Rádio definido em \textit{software}}
+
+Rádio definido em \textit{software} (Software-defined radio, ou SDR) é uma aplicação do paradigma de Rádio Cognitivo, um sistema de comunicação por rádio, constituído por \textit{hardware}
+programado por \textit{software}, onde são representados componentes físicos de transmissão digital, tipicamente construídos em \textit{hardware}, como \textit{mixers}, filtros,
+moduladores/demoduladores etc. Esses componentes são, então, construídos em \textit{software} para utilização em computadores pessoais ou sistemas embarcados, estes desenvolvidos para
+fins de simulação. A palavra que define a característica mais essencial deste tipo de sistema é ``reconfigurabilidade''~\cite{Dillinger03}. A Figura~\ref{fig:sdr-func} ilustra o funcionamento
+básico de um SDR. O \textit{Front End}, que aparece na figura, representa o componente que faz a comunicação entre o mundo real e o núcleo de processamento, ou \textit{Back End}.
+
+Alguns SDRs se encontram em tal estágio de desenvolvimento, que hoje já é até mesmo possível executar um sistema operacional Unix no próprio sistema, sem o uso de um computador
+hospedeiro~\cite{ettus}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[height=65mm,width=95mm]{./Figures/5}
+      \caption{Funcionamento básico de um SDR}
+      \label{fig:sdr-func}
+  \end{center}
+\end{figure}
+
+
+A Tabela~\ref{tab:sdrs} permite traçar um comparativo entre a USRP (na sua versão mais atual - USRP N200) e outros SDR disponíveis no mercado. Percebe-se que, apesar do preço
+relativamente alto, a USRP ainda apresenta uma das melhores relações de custo-benefício.
+
+
+\begin{table}[!ht]
+{\small
+  \begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \centering
+    	\textbf{Nome}	& \textbf{Faixa Dinâmica}		& \textbf{Amostragem}	& \textbf{Windows}	& \textbf{Linux}	& \textbf{Preço}			\\
+			&					&			&			&			& \textbf{(USD)}			\\ \hline
+	Matchstiq	& 300 MHz - 3,8 GHz			& 40 MSPS(RX/TX)	& Sim			& Sim			& 4500,00~\cite{Matchstiq}		\\ \hline
+	USRP		& Até 4 GHz				& 100MSPS(RX)		& Sim			& Sim			& 1500,00~\cite{USRP}		\\
+	N200		&					& 400MSPS(TRX)		&			&			&	 				\\ \hline
+	FLEX-5000A	& 0,01 - 65 MHz				& 48, 96, 192 KHz	& Sim			& Não			& 2800,00~\cite{Flex5000}			\\
+    \hline
+  \end{tabular}
+  \end{center}}
+  \caption{Tabela comparativa de SDRs presentes no mercado.}
+  \label{tab:sdrs}
+\end{table}
+
+\subsection{USRP}
+
+%Alterar este parágrafo para valores atuais da USRP e usar o paper referenciado apenas para níveis de aplicabilidade.
+A USRP (Universal Software Radio Peripheral) é um rádio definido por software (SDR) que apresenta portabilidade e facilidade de manuseio, por ter uma vasta documentação,
+visto que a grande maioria de seus esquemáticos e \textit{layouts} são de código aberto~\cite{USRPdocs}. Sua grande funcionalidade provém de seus dois pares de \textit{slots} de
+transmissão e recepção. Esses \textit{slots} oferecem dois conversores Digital-Analógicos (DAC) e dois conversores Analógico-Digitais (ADC)~\cite{Almeida08}. Ainda presente no sistema
+estão (considerando o modelo top de linha N210)~\cite{USRPN210}:
+
+\begin{itemize}
+ \item um FPGA Xilinx® Spartan® 3A-DSP 3400;
+ \item Conversor Analógico-Digital (ADC) dual de 100 MSPS e 14 bits;
+ \item Conversor Digital-Analógico (DAC) dual de 400 MSPS e 16 bits;
+ \item Interface Gigabit Ethernet;
+ \item Interface com GNU Radio, LabVIEW\textsuperscript{\texttrademark} e Simulink\textsuperscript{\texttrademark};
+ \item Possibilidade de sincronização para utilização de dispositivos em configuração MIMO;
+ \item Operação de nível DC até 6 GHz etc.
+\end{itemize}
+
+O processamento dos dados na USRP é feito através de módulos removíveis, tanto para aquisição de dados (RX), como para transmissão de dados (TX); são as chamadas \textit{daughterboards} - ou
+placas-filhas, em tradução livre. Cada \textit{daughterboard} é responsável ou pela recepção ou pela transmissão. Um exemplo de USRP é demonstrado na Figura ~\ref{fig:usrp}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[scale=0.6]{./Figures/3}
+      \caption{Módulo USRP padrão. Adaptado de ~\cite{USRPN210}.}
+      \label{fig:usrp}
+  \end{center}
+\end{figure}
+
+
+\section{GNU Radio}
+
+Como supracitado, a plataforma GNU Radio é um sistema de \textit{software}, com blocos de processamento de sinais, que permitem a interface com dispositivos de \textit{hardware}, para
+fins de simulação e até mesmo aplicação em redes pré-existentes.
+Em verdade, a plataforma não foi originalmente desenvolvida para fins de simulação, porém sua facilidade de manuseio permitiu a muitos usuários torná-lo um instrumento de testes para
+diversos fins, pois eles podiam escrever seus próprios blocos de processamento e executá-los sem a necessidade de um instrumento de hardware de RF para sua aplicação física~\cite{Klautau10}.
+
+\subsection{Estrutura interna}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+O desenvolvimento de aplicações em GNU Radio são distribuídas da seguinte forma: a camada mais baixa, ou seja, os blocos de processamento são escritos em linguagem C++, aproveitando-se de sua flexibilidade,
+eficiência e rapidez em tempo de execução e valendo-se da possibilidade de uso de processamento de ponto flutuante, melhorando seu desempenho. A camada mais alta é escrita em linguagem Python, a qual oferece um
+ambiente mais iterativo, simplificado e prático para o usuário. Deste ponto provém a facilidade de uso da plataforma por um grupo de pessoas conectadas (geralmente componentes de um projeto), visto que o aprendizado da
+linguagem Python é mais célere e dá uma resposta mais rápida à produtividade, já que novatos do projeto não precisam aprender a editar arquivos de configuração em C++, quando podem apenas trabalhar em cima da rotina
+escrita em Python. A responsabilidade dos blocos em C++ é, simplesmente, realizar os algoritmos que irão processar os dados de entrada. Cada classe C++ representa um bloco. Após definidos, e seus dados de entrada declarados,
+a tarefa, agora, passa a ser da linguagem Python, que reúne os blocos na estrutura de grafo, onde os vértices são as unidades de processamento e as arestas representam o fluxo dos dados~\cite{Coutinho11}.
+
+\subsection{SWIG}
+
+A comunicação entre as duas camadas é feita pela ferramenta de código aberto SWIG que, através de diversos \textit{scripts} e funções pré-definidas,
+realiza a ligação, evitando que memória seja livrada, permitindo um desempenho satisfatório. Essa ligação pode ser realizada de duas formas~\cite{swig}:
+
+% FALAR DA FORMAÇÃO DO GRAFO!!!!
+
+\begin{itemize}
+ \item Uma biblioteca compartilhada que pode ser ligada (\textit{linked}) a outras aplicações, ou seja, são compartilhadas em tempo real de execução. Estas aplicações se encontram na linguagem de destino (um exemplo é a ligação entre a linguagem JAVA e a linguagem MySQL, realizada por um \textit{plug-in});
+ \item Uma biblioteca, que pode atuar como algum tipo de módulo, representando uma extensão de um interpretador já existente.
+\end{itemize}
+
+Para ilustrar, é mostrado um exemplo da utilização de SWIG em um ambiente Unix (Ubuntu Linux 12.04 LTS):
+
+\definecolor{lightyellow}{rgb}{0.97,0.92,0.7}
+
+\renewcommand{\lstlistingname}{Código}
+\lstset{
+language=C++,
+basicstyle=\ttfamily,
+backgroundcolor=\color{lightyellow},
+tabsize=2,
+captionpos=b,
+frame=single,
+keywordstyle=\color{blue},
+%caption={altura_retangulo.c (Código em C)},
+}
+
+\lstdefinestyle{python}
+{language=Python,
+}
+
+\lstdefinestyle{bash}
+{language=bash,
+}
+
+\renewcommand{\baselinestretch}{1.0}\normalsize
+\begin{lstlisting}[caption={\textit{area\_retangulo.c} (Código em C)},label=cod:c]
+ /* area_retangulo.c */
+
+#include<stdio.h>
+float area_retangulo( float base, float altura ){
+  return base * altura;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={\textit{area\_retangulo.i} (Código em SWIG)},label=cod:swig]
+ /* area_retangulo.i */
+
+%module area_retangulo
+%{
+  extern float area_retangulo( float base, float altura );
+%}
+%include area_retangulo.c
+\end{lstlisting}
+
+\renewcommand{\baselinestretch}{1.5}\normalsize
+
+Após a escrita do código original, e do código de ligação, estes precisam ser compilados para a linguagem de destino. A fim de melhor ilustração, será utilizada a linguagem Python. No terminal são usados os comandos:
+
+\renewcommand{\baselinestretch}{0.8}\normalsize
+
+\begin{lstlisting}[style=bash,caption={Compilação no terminal},label=cod:terminal]
+$ swig -python area_retangulo.i
+$ gcc -c area_retangulo.c area_retangulo_wrap.c \
+ -I/usr/include/python2.7 -fPIC
+
+$ ld --shared -o _area_retangulo.so area_retangulo.o \
+  area_retangulo_wrap.o 
+\end{lstlisting}
+
+\renewcommand{\baselinestretch}{1.5}\normalsize
+
+As \textit{flags}, ou seja, parâmetros passados são:
+\begin{itemize}
+ \item \textbf{-c}: gera um arquivo \textbf{.o} (código-objeto) a partir do \textit{source} \textbf{.c};
+ \item \textbf{-o}: indica o arquivo de saída;
+ \item \textbf{-python}: indica a linguagem de destino;
+ \item \textbf{ld}: é um programa que conecta (\textit{linker}) arquivos de códigos e bibliotecas compartilhadas entre si;
+ \item \textbf{-$\,$-shared}: cria a biblioteca compartilhada;
+ \item \textbf{-I}: \textit{flag} do compilador, indica o diretório dos \textit{includes}, ou seja, arquivos de cabeçalho das bibliotecas;
+ \item \textbf{-fPIC}: indica que os arquivos de código-objeto serão criados conectados à mesma biblioteca compartilhada.
+\end{itemize}
+
+
+É importante frisar que o arquivo de saída da compilação mantenha a mesma forma, com o mesmo nome do arquivo de entrada, para que o devido arquivo - agora na linguagem de destino - seja chamado:
+
+\renewcommand{\baselinestretch}{1.0}\normalsize
+
+\begin{lstlisting}[style=python,caption={Execução do arquivo traduzido Python},label=cod:python]
+$ python
+>>> import area_retangulo
+>>> area_retangulo(4.5,5.3)
+>>> 23.85
+\end{lstlisting}
+
+
+\renewcommand{\baselinestretch}{1.5}\normalsize
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Em linhas gerais, a Figura~\ref{fig:gr-func} ilustra como ocorre o processamento a partir da máquina interna do sistema até a interface com o usuário.
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics[scale=0.6]{./Figures/4}
+      \caption{Diagrama de blocos da máquina GNU Radio. Do nível mais baixo ao mais alto.}
+      \label{fig:gr-func}
+  \end{center}
+\end{figure}
+
+Para se ter uma noção do corpo de um grafo escrito em GNU Radio, é mostrado no Código~\ref{cod:gr-helloworld} um exemplo simples que gera duas senoides e as direciona para o alto-falante da máquina, reproduzindo
+algo parecido com o toque de telefone.
+
+\renewcommand{\baselinestretch}{1.0}\normalsize
+
+\begin{lstlisting}[style=python,caption={Código simples de GNU Radio},label=cod:gr-helloworld]
+#!/usr/bin/env python
+
+from gnuradio import gr
+from gnuradio import audio
+
+class my_top_block( gr.top_block ):
+	def __init__( self ):
+		gr.top_block.__init__( self )
+
+		sample_rate = 30000
+		ampl = 0.5
+
+		src0 = gr.sig_source_f( sample_rate, gr.GR_SIN_WAVE, 350,
+		       ampl )
+
+		src1 = gr.sig_source_f( sample_rate, gr.GR_SIN_WAVE, 400,
+		       ampl )
+
+		dst = audio.sink( sample_rate, "" )
+		self.connect( src0, ( dst, 0 ) )
+		self.connect( src1, ( dst, 1 ) )
+
+if __name__ == '__main__':
+	try:
+		my_top_block( ).run( )
+	except [[ KeyboardInterrupt ]]:
+		pass
+\end{lstlisting}
+
+\renewcommand{\baselinestretch}{1.5}\normalsize
+
+O código acima cria uma classe \verb|my_top_block|, a qual herda da classe \verb|gr.top_block| - a classe principal que forma o grafo. O construtor da classe cria  duas fontes (\textit{sources}) e uma saída (\textit{sink}).
+São eles \verb|src0|, \verb|src1| e \verb|dst|, respectivamente. Cada fonte é definida com a geração de uma senoide para cada; uma com  frequência 350 e outra, 400. A taxa de amostragem é 30000 Hz e a amplitude, 0.5 V para ambas.
+Feito isso, os nós (blocos) são conectados entre si e cada porta (\textit{socket}) da saída é atribuída a uma fonte, neste caso \verb|(dst, 0)| (porta 0) a \verb|src0| e \verb|(dst, 1)| (porta 1) a \verb|src1|.
+A soma das duas senoides é então reproduzida no alto-falante principal.
+
+\subsection{GNU Radio Companion}
+
+Para usuários iniciantes, que nem sempre possuem a familiaridade necessária para partir diretamente ao código Python (ou até mesmo C++), o pacote GNU Radio oferece uma alternativa: o GNU Radio Companion.
+Esta ferramenta é um aplicativo gráfico capaz de construir os mesmos grafos, citados anteriormente, de uma forma mais interativa e intuitiva. Isto é possível, pois esta ferramenta extremamente útil oferece uma
+interface amigável e clara, com um ambiente simples, que permite a manipulação de blocos como objetos gráficos, permitindo realizar as ligações (arestas, fluxo de dados) à mão.
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=140mm,height=100mm]{./Figures/6}
+      \caption{Exemplo de implementação do Código~\ref{cod:gr-helloworld}.}
+      \label{fig:grc}
+  \end{center}
+\end{figure}
+
+A Figura~\ref{fig:grc} demonstra como seria a implementação gráfica do código~\ref{cod:gr-helloworld}, demonstrado acima. Esta é, claramente, uma maneira mais simples de se construir o grafo de processamento, visto que as funcionalidades
+do pacote GNU Radio estão mostrados no menu da direita, onde o usuário necessita apenas clicar e arrastar os blocos desejado para o ambiente. Uma rápida comparação do ambiente com o código permite perceber
+a implementação de cada componente do último.
+
+\begin{enumerate}
+ \item As variáveis declaradas \textbf{sample\_rate} e \textbf{ampl}, que podem ser referenciadas dentro do bloco;
+ \item Os blocos das duas senoides geradas, cada uma com uma frequência diferente;
+ \item A saída (\textbf{Audio Sink}), para onde são direcionadas as duas senoides.
+ \item As setas representando o fluxo de dados;
+ \item As portas de saída (\textbf{out}) e entrada (\textbf{in}), restritamente conectadas.
+\end{enumerate}
+
+
+
+Dentro do ambiente, a alteração de valores pode ser feita simplesmente ao clicar em um bloco. Será mostrado algo como na Figura~\ref{fig:grc-bloco}.
+Dentro da janela de configurações é possível alterar valores, como frequência e amplitude, assim como o tipo de saída, as quais podem ser de quatro tipos:
+
+\begin{itemize}
+ \item número inteiro (\textbf{int});
+ \item número de ponto flutuante de precisão simples (\textbf{single-precision float});
+ \item número complexo (\textbf{complex});
+ \item número inteiro representado por 2 Bytes (\textbf{short}).
+\end{itemize}
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.5]{./Figures/7}
+      \caption{Configurações de um bloco.}
+      \label{fig:grc-bloco}
+  \end{center}
+\end{figure}
+
+O nome do bloco reflete a sua origem, a sua função e, em geral, seu tipo de saída. A extensão ao final do bloco indica o tipo de saída que ele gera: \textbf{i}, \textbf{f}, \textbf{c} ou \textbf{s}. O prefixo (neste caso, \textbf{gr}) indica o módulo ao qual o bloco pertence.
+O bloco \textbf{gr\_sig\_source\_f\_0}, por exemplo, pertence ao módulo \textbf{gr}, gera um sinal (\textbf{sig\_source}), tem por saída um \textit{float} e tem ID \textbf{0}.
+Após a formatação do grafo, um arquivo Python é gerado no local de escolha, e pode ser simplesmente executado através do terminal.
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.4]{./Figures/8}
+      \caption{Simulador de osciloscópio.}
+      \label{fig:grc-scope}
+  \end{center}
+\end{figure}
+
+O GNU Radio Companion ainda fornece blocos de saída gráfica, como um simulador básico de osciloscópio, para que as formas de onda sejam analisadas e gráficos sejam gerados.
+Isto pode ser conferido na Figura~\ref{fig:grc-scope} quando se mostra no gráfico a forma de onda de duas senoides de frequência e fase diferentes, juntamente com algumas básicas
+funcionalidades que um osciloscópio oferece.

@@ -1,0 +1,30 @@
+%Capítulo 1 - Introdução%
+
+\section{Motivação}
+
+Desde o grande estopim da pesquisa em telecomunicações, iniciada pela pesquisa de Claude Shannon em 1948, no intuito de conceber um modelo matemático para a teoria da comunicação, com seu trabalho ``A Mathematical Theory of Communication'' ~\cite{Shannon48}, o ramo científico das telecomunicações tem recebido inúmeras e incontáveis contribuições de pesquisadores no mundo inteiro, visto a sua importância para a conexão do ser humano nas mais longínquas localidades. Essa importância se atesta pela situação atual do ramo das tecnologias de comunicação, que cada vez mais chegam mais longe, com cada vez menos falhas.
+
+O grande trunfo dessa corrente de pesquisa se deve ao enlace perfeito que Shannon estabeleceu entre a já concreta teoria das probabilidades e a sua aplicação no estudo dos sistemas de comunicação. Desde então, termos como ``codificação do canal'', ``capacidade do canal'' surgiram para suprir a necessidade de se alcançar o objetivo de transmitir o máximo possível, com o mínimo de falhas. Esta ``capacidade do canal'' traduz o quanto de informação pode ser transmitida confiavelmente por um dado canal ruidoso~\cite{Costello98}. A necessidade, então, gerou espaço para o estudo e desenvolvimento de técnicas avançadas de correção de erros, que é o escopo deste trabalho.
+
+\section{Visão geral do trabalho}
+
+Considerando o campo acadêmico e científico, há trabalhos que apresentam e esmiuçam a teoria, enquanto outros apresentam práticas e implementações. Em se tratando da área de codificação de canal,
+observa-se diversos trabalhos publicados, fazendo do assunto um campo bastante explorado, vista a cadência de sua teoria. Quando um estudante de graduação põe-se a estudar essa teoria,
+ele é exposto a teoremas e conceitos de campos adjacentes contidos na teoria da informação, e, considerando-se isto, o presente trabalho busca situar-se no intermédio entre a pesquisa profunda
+da teoria e a sua aplicação em ramos da computação, ao tratar do desenvolvimento de um \textit{software}, apesar de não muito extenso, que aplique as teorias da codificação de canal em aplicações práticas.
+Logo, a proposta prática do presente trabalho está centrada na utilização das técnicas atuais de Codificação de Canal para a obtenção de melhores resultados próximos do limite de Shannon (limite do canal)~\cite{Shannon48}. Por ausência de equipamentos de \textit{hardware} mais sofisticados, os testes podem somente ser simulados,
+e tal simulação precisa ser realizada em um ambiente eficiente, de fácil acesso e manuseio e com o menor custo possível. Tais características podem ser encontradas na plataforma de \textit{software} livre GNU Radio, daí a sua escolha.
+A codificação convertida para a técnica citada acima foi escrita e totalmente testada no ambiente GNU Radio, utilizando-se deste apenas os blocos principais e indispensáveis e sua formatação de grafo.
+O conhecimento necessário para a compreensão dos processos do trabalho será ao máximo possível apresentado para que não haja lacunas no acompanhamento da metodologia.
+
+
+\section{Organização do trabalho}
+
+O trabalho apresentado está distribuído da seguinte forma:
+
+\begin{itemize}
+ \item Capítulo 2: será apresentada a ferramenta principal utilizada neste trabalho, o GNU Radio, cuja compreensão é necessária para que se possa acompanhar o processo de desenvolvimento da metodologia. Para que isso seja possível, conceitos como Rádio Cognitivo e Rádio Definido por \textit{Software}  são apresentados;
+ \item Capítulo 3: neste capítulo, o foco é o paradigma de técnicas de Codificação de Canal, conhecida como Correção Antecipada de Erros, onde tais técnicas serão explicadas a fim de fazer a associação competente com a plataforma GNU Radio e de permitir que as aplicações propostas sejam executadas;
+ \item Capítulo 4: após a teorização dos tópicos precedentes, compete a este capítulo a análise dos resultados gerados a partir dos códigos de Correção Antecipada de Erros implementados e simulados no \textit{toolkit};
+ \item Capítulo 5: por fim, serão apresentadas as conclusões tomadas a partir de vantagens e desvantagens encontradas ao longo do processo de desenvolvimento e simulação.
+\end{itemize}

@@ -1,0 +1,157 @@
+%Capitulo 4 - Procedimentos e resultados%
+
+O procedimento sob estudo, aqui apresentado, relaciona os tópicos abordados nos capítulos anteriores através de simulações
+realizadas com um código Reed-Solomon com o o auxílio das funcionalidades e ferramentas da plataforma GNU Radio.
+
+O grafo (\textit{top\_block}) foi desenvolvido no âmbito de projetos do Laboratório de Processamento de Sinais (LaPS), os quais
+passaram a utilizar, nos últimos tempos as funcionalidades de ambas as tecnologias aqui apresentadas.
+Para o motivo deste trabalho, foram aproveitados recursos advindos da pesquisa e aliados a novas implementações que facilitem 
+o seu uso e compreensão.
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[scale=0.7]{./Figures/12_1}
+      \caption{Diagrama de blocos.}
+      \label{fig:rs-diag}
+  \end{center}
+\end{figure}
+
+O funcionamento básico do mini-sistema é como representado simplistamente pela Figura~\ref{fig:rs-diag}.
+
+Na primeira de duas partes será apresentado o emprego do \textit{top\_block} e a visão geral de seu funcionamento. Na segunda parte
+será mostrada uma interface amigável espcialmente desenvolvida para fins de análise rápida, e com o objetivo de facilitar
+o teste e simulação do código para diferentes situações (parâmetros).
+
+
+
+\section{Funcionamento do \textit{top\_block}}
+
+
+\subsection{Simulações e resultados}
+
+O conjunto de blocos desenvolvidos surgiu com o propósito de atender necessidades maiores dentro de outros projetos. Por esta razão
+é necessário que o sistema como um todo seja testado e validado. Isso pode ser feito através de interpretações de seus gráficos gerados.
+A seguir serão apresentados alguns gráficos que, não só mostram o funcionamento do sistema, como dão diretrizes para a escolha das estruturas 
+no momento do projeto do bloco de codificação de canal. Inicialmente isso é feito através de resultados do código, tanto com a opção
+de FEC ativada como desativada, como mostra a Figura~\ref{fig:rs-comp}. No estágio atual de desenvolvimento do sistema, é possível realizar,
+com eficiência, apenas simulações com modulação BPSK, a qual foi usada para todos os gráficos seguintes.
+
+\begin{figure}[!htb]
+  \begin{center}
+    \includegraphics[height=85mm,width=145mm]{./Figures/13}
+      \caption{BER com e sem FEC.}
+      \label{fig:rs-comp}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[height=85mm,width=145mm]{./Figures/14}
+      \caption{Comparação entre vários arranjos de \textit{codeword}.}
+      \label{fig:rs-curves}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[height=85mm,width=145mm]{./Figures/15}
+      \caption{Relação entre $E_bN_0$ mínima para threshold de $10^{-4}$ e $n=255$.}
+      \label{fig:rs-bitrate}
+  \end{center}
+\end{figure}
+
+Ao se perceber a vantagem da utilização dos códigos RS, abre-se um leque de possibilidades de configuração,
+lenvando-se em consideração a estrutura do código, como por exemplo, quando bits deverão ser usados para cada símbolo,
+ou quantos símbolos por \textit{codeword} utilizar, visando o \textit{trade-off} (balanço) entre performance e custo 
+computacional. A Figura~\ref{fig:rs-curves} mostra várias disposições de códigos RS para vários $m$, $n$ e $k$, e não
+é possível encontrar uma regra para quais configurações apresentam melhor desempenho apenas com o gráfico mostrado. 
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[height=85mm,width=145mm]{./Figures/16}
+      \caption{Desfalque do resultado do código para curva teórica para $n=255$ e threshold = $10^{-4}$.}
+      \label{fig:rs-diff}
+  \end{center}
+\end{figure}
+
+Para sanar o problema da indecisão, a Figura~\ref{fig:rs-bitrate} mostra em quais níves de $E_bN_0$ (em dB), cada configuração RS
+atinge o \textit{threshold} (limiar) de $10^{-4}$ para a BER, para razão de código $\frac{k}{n}$ para um $n$ fixo de \textbf{255}.
+Analisando-se o gráfico, percebe-se que, na faixa de 5 a 6 dB $E_bN_0$, ou $0,7$ de razão de código, a curva azul atinge os seus
+menores valores, mostrando que nesses valores é necessária pouca vantagem do sinal em relação ao ruído ($E_bN_0$) para se atingir o \textit{threshold}. 
+Nos valores abaixo desses e próximos de \textbf{1}, a taxa é alta por dois motivos:
+
+\begin{itemize}
+ \item Nas taxas altas há poucos símbolos de redundância, logo a probabilidade de erro é maior;
+ \item Nas taxas baixas, quanto maior a redundância, menos energia por símbolo será fornecida, já que mais
+       processamento de redundância será necessário. Isto causa o demodulador a cometer mais erros~\cite{Sklar00}.
+\end{itemize}
+
+De posse das melhores taxas de razão de código, passa a ser conveniente procurar a curva de BER para cada configuração, e isto
+é feito na Figura~\ref{fig:rs-diff}, utilizando apenas $n=255$. O propósito deste gráfico, na realidade, é mostrar o desfalque
+da curva gerada pelo sistema desenvolvido e a curva teórica para o mesmo arranjo, mostrando que o sistema ainda precisa ser aprimorado.
+A estatística poderia ser aproximada pela teórica, com, por exemplo, a geração de mais bits e mais iterações. Entretanto, o sistema ainda se mostra
+instável para inúmeras simulações seguidas, requerendo a implantação de técnicas de otimização, visto que é necessária a manipulação de matrizes densas
+e muitas operações de ponto flutuante.
+Da mesma forma, é realizada uma comparação entre diversas configurações RS, na Figura~\ref{fig:rs-255_k_0.7}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[height=85mm,width=145mm]{./Figures/17}
+      \caption{Desempenho de $(255,k)$ para razão de código$=0,7$.}
+      \label{fig:rs-255_k_0.7}
+  \end{center}
+\end{figure}
+
+É fácil perceber que as curvas RS(255,183) e RS(511,366) possuem vantagem em relação às outras. Para a condição proposta de $\textit{threshold}=10^{-4}$,
+seria mais lógico utilizar a primeira, já que ambas apresentam resultados próximos, e ela necessita de menos complexidade de implementação.
+
+\section{Interface do usuário}
+
+A simples interface, desenvolvida com o conjunto de bibliotecas \textbf{GTK+}, apresenta apenas opções
+que podem ser alteradas pelo usuário, a fim de fazer as devidas simulações. A interface é integrada ao
+\textit{script} desenvolvido em \textbf{Python}, que faz a simulação propriamente dita. Isso acontece
+ao se chamar os módulos do GNU Radio que sejam necessários à aplicação. A interface simplesmente chama esse
+\textit{script}, iniciando-o com os parâmetros definidos pelo usuário. Os mesmos parâmetros são utilizados
+para acessar os arquivos de texto com os parâmetros correspondentes, a fim de gerar os gráficos com os resultados obtidos.
+O programa é resumido a um arquivo \textbf{Python} e um arquivo \textbf{XML}, de onde o código é interpretado para formar
+a janela principal da aplicação.
+
+\subsection{A plataforma GTK+}
+
+GTK+ é um \textit{software} livre, parte do projeto GNU, que oferece um conjunto de ferramentas (\textit{toolkit})
+para a criação de interfaces gráficas de usuário (GUI), originalmente desenvolvido com a aparência geral do Motif
+(interface gráfica primária dos sistemas UNIX. O \textit{toolkit} tem sido desenvolvido para suportar diversas
+linguagens de programação, como \textbf{C/C++} e \textbf{Python} e é um método rápido para desenvolvimento de aplicações~\cite{gtk}.
+
+
+\subsection{A interface}
+
+A interface desenvolvida em Python, com auxílio da biblioteca gtk+, é bastante simples e é apresentada como mostra a Figura~\ref{fig:if}.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[scale=0.5]{./Figures/18}
+      \caption{Interface de simulação e apresentação de resultados.}
+      \label{fig:if}
+  \end{center}
+\end{figure}
+
+O seu funcionamento é bastante simples e basta selecionar os parâmetros que devem ser utilizados na simulação, como $n$, $k$ e valor de $E_bN_0$.
+O valor de $t$ é dado automaticamente, pois depende dos dois primeiros. A vantagem é que o usuário precisa apenas inserir os valores uma única vez e,
+após a simulação, gerar os gráficos dos mesmos parâmetros, com o clique no botão ``Plotar'', como é um exemplo da Figura~\ref{fig:if-plot}.
+O gráfico é gerado através do módulo (biblioteca) \textbf{matplotlib} da linguagem Python, e permite buscar o arquivo de texto que a simulação
+gera para gerar o gráfico correspondente. A janela com o gráfico que se apresenta ainda dá opções como ``Salvar'' ou ``Mover''.
+
+A interface ainda apresenta uma representação da \textit{codeword} RS para usuários iniciantes, para que compreendam o significado de cada um dos 
+parâmetros. No campo de número de bits, ainda é possível apenas utilizar BPSK, mas o programa será constantemente aprimorado após a conclusão deste trabalho, assim
+como a possibilidade de se apresentar resultados de diversas curvas simultaneamente.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[scale=0.5]{./Figures/19}
+      \caption{Gráfico gerado pelo programa.}
+      \label{fig:if-plot}
+  \end{center}
+\end{figure}
