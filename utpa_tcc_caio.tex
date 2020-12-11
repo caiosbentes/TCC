@@ -80,6 +80,7 @@
 %I (Aldebaro) added the package below:
 \usepackage{epstopdf}
 \usepackage{titlesec}
+\usepackage[alf, abnt-emphasize=bf]{abntex2cite}	% Citações padrão ABNT
 %and also used Alt+F7 in TeXnicCenter to include --enable-write18 in the command line that invokes 
 %the pdftex "compiler". The warning is still there, but the eps => pdf figure conversion now is
 %done on-the-fly. Later we will have to learn how to use \ifpdf to make the .tex compatible with both
@@ -321,12 +322,13 @@ Abstract written in english.
 %\bibliographystyle{abnt} % Estilo para gerar referncias em conformidade com
                           % as normas brasileiras
 
-\bibliographystyle{./IEEEtran}
+%\bibliographystyle{./IEEEtran}
+\bibliography{ufpa_tcc_caio}
 \clearpage
 %\addcontentsline{toc}{chapter}{Referências Bibliográficas}
 \addcontentsline{toc}{chapter}{Referências Bibliográficas}
 %\bibliography{../public/speech_sa}
-\bibliography{ufpa_tcc_caio}
+
 
 
 
